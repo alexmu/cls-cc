@@ -4,9 +4,12 @@
  */
 package cn.ac.iie.cls.cc.mastercc;
 
-import cn.ac.iie.cls.cc.server.CLSCCServer;
+import cn.ac.iie.cls.cc.slavecc.SlaveHandler;
+import cn.ac.iie.cls.cc.slavecc.SlaveHandlerFactory;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -42,33 +45,27 @@ public class CCHandler extends AbstractHandler {
         Request baseRequest = (request instanceof Request) ? (Request) request : HttpConnection.getCurrentConnection().getRequest();
         baseRequest.setHandled(true);
 
-        String url = baseRequest.getPathInfo();
-        System.out.println(url);
-        String[] urlItems = url.split("/");
-        if (urlItems.length < 2) {
-            logger.warn("bad request for nothing");
-        } else {
-            String slaveCCName = urlItems[1].toLowerCase();
-            if (slaveCCName.equals("dataetl")) {
-                logger.info("salvecc dataetl found");
-                if(urlItems.length<3){
-                    logger.warn("bad request for dataetl");
-                    return;
-                }
-                String operate = urlItems[2].toLowerCase();
-                if (operate.equals("execute")) {
-                    logger.info("execute");
-                } else if (operate.equals("checkstatus")) {
-                    logger.info("checkstatus");
-                }
-            } else {
-                logger.warn("no slave cc found for " + urlItems[0]);
-            }
+        String requestPath = baseRequest.getPathInfo().toLowerCase();
+        logger.debug(requestPath);
+
+        ServletInputStream servletInputStream = baseRequest.getInputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] b = new byte[4096];
+        int i = 0;
+        while ((i = servletInputStream.read(b, 0, 4096)) > 0) {
+            out.write(b, 0, i);
+        }
+        String requestContent = new String(out.toByteArray(), "UTF-8");
+        logger.debug(requestContent);
+
+        try {
+            SlaveHandler slaveHandler = SlaveHandlerFactory.getSlaveHandler(requestPath);
+            
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().println(slaveHandler.execute(requestContent));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
         }
 
-//        response.setContentType("text/html;charset=utf-8");
-//        response.setStatus(HttpServletResponse.SC_OK);
-//        baseRequest.setHandled(true);
-//        response.getWriter().println("<h1>ok</h1>");
     }
 }

@@ -44,7 +44,6 @@ public class CLSCCServer {
         } catch (Exception ex) {
             logger.error("starting cls ccer server is failed for " + ex.getMessage(), ex);
         }
-
         System.exit(0);
     }
 
