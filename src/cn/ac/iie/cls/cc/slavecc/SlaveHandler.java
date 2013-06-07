@@ -4,8 +4,6 @@
  */
 package cn.ac.iie.cls.cc.slavecc;
 
-import java.util.Map;
-
 public interface SlaveHandler {
 
     public String execute(String pRequestContent) throws Exception;    
