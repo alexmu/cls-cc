@@ -16,7 +16,7 @@ public class DataETLExecuteHandler implements SlaveHandler {
         String result = null;
 
         result = pRequestContent != null && !pRequestContent.isEmpty() ? pRequestContent : this.toString();
-        return result;
+        return "hello";
     }
 
     public static void main(String[] args) {
