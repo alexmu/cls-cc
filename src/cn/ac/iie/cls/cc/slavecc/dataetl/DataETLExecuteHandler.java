@@ -19,7 +19,7 @@ public class DataETLExecuteHandler implements SlaveHandler,Runnable {
         String result = null;
 
         result = pRequestContent != null && !pRequestContent.isEmpty() ? pRequestContent : this.toString();
-        return result;
+        return "hello";
     }
     
     @Override
