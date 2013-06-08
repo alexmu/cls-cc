@@ -12,6 +12,7 @@ import cn.ac.iie.cls.cc.slavecc.SlaveHandler;
  */
 public class CLSAgentDataCollectHandler implements SlaveHandler {
 
+//    private 
     public String execute(String pRequestContent) throws Exception {
         String result = null;       
         return result;

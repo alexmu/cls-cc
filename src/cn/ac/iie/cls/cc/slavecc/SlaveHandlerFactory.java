@@ -37,7 +37,7 @@ public class SlaveHandlerFactory {
         PropertyConfigurator.configure("log4j.properties");
         logger = Logger.getLogger(SlaveHandlerFactory.class.getName());
     }
-    private static Map<String, Class> SlaveClassSet = new HashMap<String, Class>() {
+    private static Map<String, Class> slaveClassSet = new HashMap<String, Class>() {
         {
             //dataetl
             put("/dataetl/execute", DataETLExecuteHandler.class);
@@ -65,20 +65,26 @@ public class SlaveHandlerFactory {
             put("/raccluster/session", RacClusterSessionHandler.class);
         }
     };
+    private static Map<String, SlaveHandler> slaveObjectSet = new HashMap<String, SlaveHandler>();
 
     public static SlaveHandler getSlaveHandler(String pRequestPath) throws Exception {
         SlaveHandler slaveHandler = null;
 
-        Class slaveHandlerClass = SlaveClassSet.get(pRequestPath);
-        if (slaveHandlerClass != null) {
-            try {
-                slaveHandler = (SlaveHandler) (slaveHandlerClass.newInstance());
-            } catch (Exception ex) {
-                slaveHandler = null;
-                throw new Exception("initializing slave handler for " + pRequestPath + " is failed for " + ex.getMessage(), ex);
+        slaveHandler = slaveObjectSet.get(pRequestPath);
+
+        if (slaveHandler == null) {
+            Class slaveHandlerClass = slaveClassSet.get(pRequestPath);
+            if (slaveHandlerClass != null) {
+                try {
+                    slaveHandler = (SlaveHandler) (slaveHandlerClass.newInstance());
+                    slaveObjectSet.put(pRequestPath, slaveHandler);
+                } catch (Exception ex) {
+                    slaveHandler = null;
+                    throw new Exception("initializing slave handler for " + pRequestPath + " is failed for " + ex.getMessage(), ex);
+                }
+            } else {
+                throw new Exception("no slave handler for " + pRequestPath + " is found ");
             }
-        } else {
-            throw new Exception("no slave handler for " + pRequestPath + " is found ");
         }
         return slaveHandler;
     }

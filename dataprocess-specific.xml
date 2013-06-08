@@ -1,63 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <operator name="read1_read2_filter1" class="Process" version="1.0" x="-1" y="-1">
-	<!-- <operator name="csv_filter1" class="Process" version="1.0" x="-1" y="-1">
-		<operator name="read" class="CSVFileInput" x="10" y="10">
-			<description>描述</description>
-		</operator>
-		<operator name="filter1" class="Filter" x="10" y="10">
-			<description>描述</description>
-		</operator>
-		<outport name="output1" alias="过程输出端口1" />
-		<connect from="read.output1" to="filter1.input1"/>
-		<connect from="filter1.output1" to="parent.output1"/>
+	<operator name="local_file_collect1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">
+		<parameter name="srcpath">file:///mnt/data/</parameter>
 	</operator>
-	<operator name="filter2" class="Filter" x="10" y="10">
-		<description>描述</description>
-	</operator>
-	<operator name="filter3" class="Filter" x="10" y="10">
-		<description>描述</description>
-	</operator>
-	<connect from="csv_filter1.output1" to="filter2.input1"/>
-	<connect from="csv_filter1.output1" to="filter3.input1"/> -->
-	
-<!-- 	<operator name="read1" class="CSVFileInput" x="10" y="10">
-			<description>描述</description>
-		</operator>
-	<operator name="read2" class="CSVFileInput" x="10" y="10">
-			<description>描述</description>
-		</operator>	
-	<operator name="filter1" class="Filter" x="10" y="10">
-			<description>描述</description>
-		</operator>
-	<connect from="read1.output1" to="filter1.input1"/>	
-	<connect from="read2.output1" to="filter1.input1"/> -->
-	
 	<operator name="csv_filter1" class="Process" version="1.0" x="-1" y="-1">
 		<operator name="read" class="CSVFileInput" x="10" y="10">
-			<description>描述</description>
+			<description>鎻忚堪</description>
 		</operator>
 		<operator name="filter1" class="Filter" x="10" y="10">
-			<description>描述</description>
+			<description>鎻忚堪</description>
 		</operator>
-		<outport name="output1" alias="过程输出端口1" />
-		<connect from="read.output1" to="filter1.input1"/>
-		<connect from="filter1.output1" to="parent.output1"/>
+		<outport name="outport1" alias="杩囩▼杈撳嚭绔彛1" />
+		<connect from="read.outport1" to="filter1.inport1"/>
+		<connect from="filter1.outport1" to="parent.outport1"/>
 	</operator>
 	<operator name="filter2_filter3" class="Process" version="1.0" x="-1" y="-1">
 		<operator name="filter2" class="Filter" x="10" y="10">
-			<description>描述</description>
+			<description>鎻忚堪</description>
 		</operator>
 		<operator name="filter3" class="Filter" x="10" y="10">
-			<description>描述</description>
+			<description>鎻忚堪</description>
 		</operator>
-		<outport name="input1" alias="过程输入端口1" />
-		<outport name="output1" alias="过程输出端口1" />
-		<connect from="parent.input1" to="filter2.input1"/>
-		<connect from="filter2.output1" to="filter3.input1"/>
-		<connect from="filter3.output1" to="parent.output1"/>
+		<outport name="inport1" alias="杩囩▼杈撳叆绔彛1" />
+		<outport name="outport1" alias="杩囩▼杈撳嚭绔彛1" />
+		<connect from="parent.inport1" to="filter2.inport1"/>
+		<connect from="filter2.outport1" to="filter3.inport1"/>
+		<connect from="filter3.outport1" to="parent.outport1"/>
 	</operator>
-	<operator name="outputer1" class="AlmightyOutput" x="10" y="10">
-			<description>描述</description>
+	<operator name="outporter1" class="AlmightyOutput" x="10" y="10">
+			<description>鎻忚堪</description>
 	</operator>
-	<connect from="csv_filter1.output1" to="filter2_filter3.input1"/>
-	<connect from="filter2_filter3.output1" to="outputer1.input1"/>
+	<connect from="local_file_collect1.outport1" to="csv_filter1.inport1"/>
+	<connect from="csv_filter1.outport1" to="filter2_filter3.inport1"/>
+	<connect from="filter2_filter3.outport1" to="outporter1.inport1"/>
 </operator>
