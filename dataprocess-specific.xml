@@ -4,6 +4,7 @@
                 <parameter name="_task_id">1</parameter>
                 <parameter name="_operator_id">1</parameter>
 		<parameter name="srcpath">file:///mnt/data/</parameter>
+                <parameter name="processJobInstanceId">asdasdasdads</parameter>
 	</operator>
 	<operator name="csv_filter1" class="Process" version="1.0" x="-1" y="-1">
 		<operator name="read" class="CSVFileInput" x="10" y="10">
