@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <operator name="read1_read2_filter1" class="Process" version="1.0" x="-1" y="-1">
 	<operator name="local_file_collect1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">
+                <parameter name="_task_id">1</parameter>
+                <parameter name="_operator_id">1</parameter>
 		<parameter name="srcpath">file:///mnt/data/</parameter>
 	</operator>
 	<operator name="csv_filter1" class="Process" version="1.0" x="-1" y="-1">
