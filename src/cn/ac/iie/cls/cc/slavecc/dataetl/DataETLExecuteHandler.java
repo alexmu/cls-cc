@@ -5,26 +5,35 @@
 package cn.ac.iie.cls.cc.slavecc.dataetl;
 
 import cn.ac.iie.cls.cc.slavecc.SlaveHandler;
+import cn.ac.iie.cls.cc.slavecc.clsagent.DataCollectJob;
+import cn.ac.iie.cls.cc.slavecc.clsagent.DataCollectJobTracker;
 
 /**
  *
  * @author alexmu
  */
-public class DataETLExecuteHandler implements SlaveHandler,Runnable {
+public class DataETLExecuteHandler implements SlaveHandler {
 
-    private static DataETLExecuteHandler dataETLExecuteHandler = null;
-    
     @Override
-    public String execute(String pRequestContent) throws Exception {
+    public String execute(String pRequestContent) {
         String result = null;
 
-        result = pRequestContent != null && !pRequestContent.isEmpty() ? pRequestContent : this.toString();
-        return "hello";
-    }
-    
-    @Override
-    public void run(){
-        
+        ETLJob etlJob = ETLJob.getETLJob(pRequestContent);
+
+        if (etlJob != null) {
+            String clsAgentDataCollectDescriptor = etlJob.getDataProcessDescriptor().get(ETLJob.CLS_AGENT_DATA_COLLECT_DESC);
+            if (clsAgentDataCollectDescriptor != null) {
+                DataCollectJob dataCollectJob = new DataCollectJob(etlJob.getProcessJobInstanceID(), clsAgentDataCollectDescriptor);
+                DataCollectJobTracker.appendJob(dataCollectJob);
+            }
+
+            ETLJobTracker.appendJob(etlJob);
+            result = "succeeded";
+        } else {
+            result = "failed";
+        }
+
+        return result;
     }
 
     public static void main(String[] args) {

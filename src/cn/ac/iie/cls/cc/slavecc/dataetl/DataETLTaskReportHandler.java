@@ -12,7 +12,7 @@ import cn.ac.iie.cls.cc.slavecc.SlaveHandler;
  */
 public class DataETLTaskReportHandler implements SlaveHandler {
 
-    public String execute(String pRequestContent) throws Exception {
+    public String execute(String pRequestContent){
         String result = null;
 
         result = pRequestContent != null && !pRequestContent.isEmpty() ? pRequestContent : this.toString();

@@ -6,5 +6,5 @@ package cn.ac.iie.cls.cc.slavecc;
 
 public interface SlaveHandler {
 
-    public String execute(String pRequestContent) throws Exception;    
+    public String execute(String pRequestContent);    
 }

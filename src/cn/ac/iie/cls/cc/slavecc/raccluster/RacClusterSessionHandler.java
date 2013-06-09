@@ -5,7 +5,6 @@
 package cn.ac.iie.cls.cc.slavecc.raccluster;
 
 import cn.ac.iie.cls.cc.slavecc.SlaveHandler;
-import cn.ac.iie.cls.cc.slavecc.dataetl.DataETLCheckStatusHandler;
 
 /**
  *
@@ -13,10 +12,9 @@ import cn.ac.iie.cls.cc.slavecc.dataetl.DataETLCheckStatusHandler;
  */
 public class RacClusterSessionHandler implements SlaveHandler {
 
-    public String execute(String pRequestContent) throws Exception {
+    public String execute(String pRequestContent) {
         String result = null;
 
         return result;
     }
-    
 }
