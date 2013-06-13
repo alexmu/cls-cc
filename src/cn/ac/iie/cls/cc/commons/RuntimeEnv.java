@@ -22,6 +22,7 @@ public class RuntimeEnv {
     private static final String DB_CLUSTERS = "dbClusters";
     public static final String METADB_CLUSTER = "metaDBCluster";
     private static Map<String, Object> dynamicParams = new HashMap<String, Object>();
+    
     //logger
     static Logger logger = null;
 

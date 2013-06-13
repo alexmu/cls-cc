@@ -19,42 +19,42 @@ import org.apache.log4j.PropertyConfigurator;
  * @author alexmu
  */
 public class DataCollectJob {
-    
+
     private String processJobInstanceID = "";
     private String dataProcessDescriptor = "";
     private Map<String, DataCollectTask> dataCollectTaskSet = new HashMap<String, DataCollectTask>();
     private Map<String, DataCollectTask> succeededDataCollectTaskSet = new HashMap<String, DataCollectTask>();
     private Map<String, DataCollectTask> failedDataCollectTaskSet = new HashMap<String, DataCollectTask>();
     static Logger logger = null;
-    
+
     static {
         PropertyConfigurator.configure("log4j.properties");
         logger = Logger.getLogger(DataCollectJob.class.getName());
     }
-    
+
     public DataCollectJob(String pProcessJobInstanceID, String pDataProcessDescriptor) {
         processJobInstanceID = pProcessJobInstanceID;
         dataProcessDescriptor = pDataProcessDescriptor;
     }
-    
+
     public String getProcessJobInstanceID() {
         return processJobInstanceID;
     }
-    
+
     public String getDataProcessDescriptor() {
         return dataProcessDescriptor;
     }
-    
+
     public void appendTask(List<DataCollectTask> pDataCollectTaskList) {
         for (DataCollectTask dataCollectTask : pDataCollectTaskList) {
             dataCollectTaskSet.put(dataCollectTask.fileName, dataCollectTask);
         }
-        ETLJob etlJob = ETLJobTracker.getJob(processJobInstanceID);
+        ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {
             etlJob.setTask2doNum(pDataCollectTaskList.size());
         }
     }
-    
+
     public void resposeTask(List<DataCollectTask> pDataCollectTaskList) {
         List<ETLTask> etlTaskList = new ArrayList<ETLTask>();
         for (DataCollectTask dataCollectTask : pDataCollectTaskList) {
@@ -73,11 +73,11 @@ public class DataCollectJob {
             }
         }
         //add list
-        ETLJob etlJob = ETLJobTracker.getJob(processJobInstanceID);
+        ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {
-            ETLJobTracker.appendTask(processJobInstanceID, etlTaskList);
+            ETLJobTracker.getETLJobTracker().appendTask(processJobInstanceID, etlTaskList);
         }
-        
+
         if (dataCollectTaskSet.size() < 1) {
             if (succeededDataCollectTaskSet.size() < 1) {
                 logger.error("data collect job for data process job " + processJobInstanceID + " is finished unsuccessfully");
@@ -86,7 +86,7 @@ public class DataCollectJob {
             } else {
                 logger.info("data collect job for data process job " + processJobInstanceID + " is finished successfully");
             }
-            DataCollectJobTracker.removeJob(this);
+            DataCollectJobTracker.getDataCollectJobTracker().removeJob(this);
         }
     }
 }

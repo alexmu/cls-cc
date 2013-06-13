@@ -161,6 +161,8 @@ public class ETLJob implements Runnable {
                         failedETLTaskSet.put(etlTask.fileName, etlTask);
                         etlTaskSet.remove(etlTask.fileName);
                         break;
+                    case ETLTask.EXECUTING:
+                        break;
                     default:
                         logger.warn("unknown task status " + etlTask.taskStatus + " for etl task of " + etlTask.fileName);
                 }
@@ -198,7 +200,7 @@ public class ETLJob implements Runnable {
                         } else {
                             logger.info("etl job for data process job " + processJobInstanceID + " is finished successfully");
                         }
-                        ETLJobTracker.removeJob(this);
+                        ETLJobTracker.getETLJobTracker().removeJob(this);
                         break;
                     }
                 }

@@ -18,28 +18,41 @@ public class DataCollectJobTracker implements Runnable {
 
     private static BlockingQueue<DataCollectJob> dataCollectJobWaitingList = new LinkedBlockingQueue<DataCollectJob>();
     private static Map<String, DataCollectJob> executingDataCollectJobSet = new HashMap<String, DataCollectJob>();
+    private static DataCollectJobTracker dataCollectJobTracker = null;
 
-    public static void appendJob(DataCollectJob pDataCollectJob) {
+    private DataCollectJobTracker() {
+    }
+
+    public static synchronized DataCollectJobTracker getDataCollectJobTracker() {
+        if (dataCollectJobTracker == null) {
+            dataCollectJobTracker = new DataCollectJobTracker();
+            Thread dataCollectJobTrackerRunner = new Thread(dataCollectJobTracker);
+            dataCollectJobTrackerRunner.start();
+        }
+        return dataCollectJobTracker;
+    }
+
+    public void appendJob(DataCollectJob pDataCollectJob) {
         try {
             dataCollectJobWaitingList.put(pDataCollectJob);
         } catch (Exception ex) {
         }
     }
 
-    public static void removeJob(DataCollectJob pDataCollectJob) {
+    public void removeJob(DataCollectJob pDataCollectJob) {
         synchronized (executingDataCollectJobSet) {
             executingDataCollectJobSet.remove(pDataCollectJob.getProcessJobInstanceID());
         }
     }
 
-    public static void appendTask(String pDataProcessInstanceId, List<DataCollectTask> pDataCollectTaskList) {
+    public void appendTask(String pDataProcessInstanceId, List<DataCollectTask> pDataCollectTaskList) {
         synchronized (executingDataCollectJobSet) {
             DataCollectJob dataCollectJob = executingDataCollectJobSet.get(pDataProcessInstanceId);
             dataCollectJob.appendTask(pDataCollectTaskList);
         }
     }
 
-    public static void responseTask(String pDataProcessInstanceId,  List<DataCollectTask> pDataCollectTaskList) {
+    public void responseTask(String pDataProcessInstanceId, List<DataCollectTask> pDataCollectTaskList) {
         synchronized (executingDataCollectJobSet) {
             DataCollectJob dataCollectJob = executingDataCollectJobSet.get(pDataProcessInstanceId);
             dataCollectJob.resposeTask(pDataCollectTaskList);
