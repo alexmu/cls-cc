@@ -6,8 +6,7 @@ package cn.ac.iie.cls.cc.server;
 
 import cn.ac.iie.cls.cc.commons.RuntimeEnv;
 import cn.ac.iie.cls.cc.config.Configuration;
-import cn.ac.iie.cls.cc.mastercc.CCHandler;
-import java.net.URL;
+import cn.ac.iie.cls.cc.master.CCHandler;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.mortbay.jetty.Connector;
@@ -15,7 +14,6 @@ import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.*;
 import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
 
 /**
  *
