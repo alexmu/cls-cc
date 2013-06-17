@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requestParams>
+	<databaseName>gjzxdb</databaseName>
+	<name>917mt1</name>
+	<tableType></tableType>
+	<columns>
+		<column>
+			<name>SOURCE_TYPE</name>
+			<type>VARCHAR2(20)</type>
+			<default />
+			<comment />
+			<null>1</null>
+			<pk>0</pk>
+			<index>0</index>
+			<unique>0</unique>
+		</column>
+		<column>
+			<name>SOURCE</name>
+			<type>VARCHAR2(20)</type>
+			<default />
+			<comment />
+			<null>1</null>
+			<pk>0</pk>
+			<index>0</index>
+			<unique>0</unique>
+		</column>
+	</columns>
+	<comment>木马僵尸事实表</comment>
+</requestParams>
+

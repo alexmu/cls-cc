@@ -4,6 +4,7 @@
  */
 package cn.ac.iie.cls.cc.slave.nosqlcluster;
 
+
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -20,35 +23,37 @@ import org.dom4j.Element;
 
 /**
  *
- * @author alexmu
+ * @author wanghh19880807
+ * 
  */
-public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
 
+//获取某个数据库的列表
+public class NoSqlClusterDataBaseTableListHandler implements SlaveHandler{
+   
     private static final String SUCCESS_RESPONSE = "<response><message>MESSAGE<message></response>";
     private static final String FAIL_RESPONSE = "<error><message>MESSAGE<message></error>";
     static Logger logger = null;
-
+    
     static {
         PropertyConfigurator.configure("log4j.properties");
-        logger = Logger.getLogger(NoSqlClusterDataBaseCreateHandler.class.getName());
+        logger = Logger.getLogger(NoSqlClusterDataBaseTableListHandler.class.getName());
     }
 
     public String execute(String pRequestContent) {
-        String result = "";
+        String result = "";//返回的结果
 
         String databaseName = null;
         Connection conn = null;
+        ResultSet rs = null;
+        String tableNameList="";
         try {
-            Document databaseCreateDoc = DocumentHelper.parseText(pRequestContent);
-            Element requestParamsElt = databaseCreateDoc.getRootElement();
+            Document databaseDropDoc = DocumentHelper.parseText(pRequestContent);
+            Element requestParamsElt = databaseDropDoc.getRootElement();
             Element databaseNameElt = requestParamsElt.element("databaseName");
             databaseName = databaseNameElt == null ? "" : databaseNameElt.getStringValue();
-            Element commentElt = requestParamsElt.element("comment");
-            String comment = commentElt == null ? "" : commentElt.getStringValue();
-
+    
             if (databaseName.isEmpty()) {
-                //databaseName
-                result = FAIL_RESPONSE.replace("MESSAGE", "databaseName is not defined");
+                result = FAIL_RESPONSE.replace("MESSAGE", databaseName +" is not defined");
             } else {
                 //connect to hive
                 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
@@ -56,25 +61,49 @@ public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
                 Statement stmt = conn.createStatement();
                 //parse xml
                 //then create table
-                String sql = "CREATE DATABASE IF NOT EXISTS " + databaseName +(comment.isEmpty() ? "" : " COMMENT '" + comment + "'");
+                String sql = "SHOW TABLES FROM " + databaseName ;
                 logger.info(sql);
-                stmt.executeQuery(sql);
-                result = SUCCESS_RESPONSE.replace("MESSAGE", "create database " + databaseName + " successfully");
+                rs =stmt.executeQuery(sql);
+                
+                while(rs.next()){
+                    String tableName=rs.getString(1);
+                    tableNameList +="<table>" + tableName + "</table>";
+                }
+                //将Message替换成为相应的信息
+                
+                
+                result = SUCCESS_RESPONSE.replace("<message>MESSAGE<message>", "<tables>" + tableNameList + "</tables>");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            result = FAIL_RESPONSE.replace("MESSAGE", "create database " + databaseName + " unsuccessfully for " + ex.getMessage());
+            result = FAIL_RESPONSE.replace("MESSAGE", "get table list of database " + databaseName + " unsuccessfully for " + ex.getMessage());
         } finally {
             try {
                 conn.close();
             } catch (Exception ex) {
+                if(rs!=null){
+                    try {
+                        rs.close();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+               
+                if(conn!=null){
+                    try {
+                        conn.close();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+                
             }
         }
         return result;
     }
 
     public static void main(String[] args) {
-        File inputXml = new File("create-database-specific.xml");
+        File inputXml = new File("tablelist-database-specific.xml");
         try {
             String xmlStr = "";
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inputXml)));
@@ -84,8 +113,8 @@ public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
                 xmlStr += line;
             }
             System.out.println(xmlStr);
-            System.out.println("parse ok");
-            NoSqlClusterDataBaseCreateHandler handler = new NoSqlClusterDataBaseCreateHandler();
+            System.out.println("OK");
+            NoSqlClusterDataBaseTableListHandler handler = new NoSqlClusterDataBaseTableListHandler();
             System.out.println(handler.execute(xmlStr));
         } catch (Exception ex) {
             ex.printStackTrace();

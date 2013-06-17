@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -20,61 +21,66 @@ import org.dom4j.Element;
 
 /**
  *
- * @author alexmu
+ * @author wanghh19880807
  */
-public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
-
+public class NoSqlClusterDataBaseDropHandler implements SlaveHandler{
+   
     private static final String SUCCESS_RESPONSE = "<response><message>MESSAGE<message></response>";
     private static final String FAIL_RESPONSE = "<error><message>MESSAGE<message></error>";
     static Logger logger = null;
-
+    
     static {
         PropertyConfigurator.configure("log4j.properties");
-        logger = Logger.getLogger(NoSqlClusterDataBaseCreateHandler.class.getName());
+        logger = Logger.getLogger(NoSqlClusterDataBaseDropHandler.class.getName());
     }
 
     public String execute(String pRequestContent) {
-        String result = "";
+        String result = "";//返回的结果
 
         String databaseName = null;
         Connection conn = null;
         try {
-            Document databaseCreateDoc = DocumentHelper.parseText(pRequestContent);
-            Element requestParamsElt = databaseCreateDoc.getRootElement();
+            Document databaseDropDoc = DocumentHelper.parseText(pRequestContent);
+            Element requestParamsElt = databaseDropDoc.getRootElement();
             Element databaseNameElt = requestParamsElt.element("databaseName");
             databaseName = databaseNameElt == null ? "" : databaseNameElt.getStringValue();
-            Element commentElt = requestParamsElt.element("comment");
-            String comment = commentElt == null ? "" : commentElt.getStringValue();
-
+    
             if (databaseName.isEmpty()) {
-                //databaseName
-                result = FAIL_RESPONSE.replace("MESSAGE", "databaseName is not defined");
+                result = FAIL_RESPONSE.replace("MESSAGE", databaseName +" is not defined");
             } else {
                 //connect to hive
                 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
                 conn = DriverManager.getConnection("jdbc:hive://192.168.120.46:10000/default", "", "");
                 Statement stmt = conn.createStatement();
                 //parse xml
-                //then create table
-                String sql = "CREATE DATABASE IF NOT EXISTS " + databaseName +(comment.isEmpty() ? "" : " COMMENT '" + comment + "'");
+                //then drop database
+                String sql = "DROP DATABASE " + databaseName ;
                 logger.info(sql);
                 stmt.executeQuery(sql);
-                result = SUCCESS_RESPONSE.replace("MESSAGE", "create database " + databaseName + " successfully");
+                //将Message替换成为相应的信息
+                result = SUCCESS_RESPONSE.replace("MESSAGE", "drop database " + databaseName + " successfully");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            result = FAIL_RESPONSE.replace("MESSAGE", "create database " + databaseName + " unsuccessfully for " + ex.getMessage());
+            result = FAIL_RESPONSE.replace("MESSAGE", "drop database " + databaseName + " unsuccessfully for " + ex.getMessage());
         } finally {
             try {
                 conn.close();
             } catch (Exception ex) {
+                if(conn!=null){
+                    try {
+                        conn.close();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
             }
         }
         return result;
     }
 
     public static void main(String[] args) {
-        File inputXml = new File("create-database-specific.xml");
+        File inputXml = new File("drop-database-specific.xml");
         try {
             String xmlStr = "";
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inputXml)));
@@ -84,8 +90,8 @@ public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
                 xmlStr += line;
             }
             System.out.println(xmlStr);
-            System.out.println("parse ok");
-            NoSqlClusterDataBaseCreateHandler handler = new NoSqlClusterDataBaseCreateHandler();
+            System.out.println("OK");
+            NoSqlClusterDataBaseDropHandler handler = new NoSqlClusterDataBaseDropHandler();
             System.out.println(handler.execute(xmlStr));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -93,3 +99,4 @@ public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
 
     }
 }
+
