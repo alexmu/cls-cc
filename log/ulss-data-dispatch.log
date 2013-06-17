@@ -1,0 +1,41 @@
+2013-06-17 09:55:55,985 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:58)] [main] - initializing cls cc server...
+2013-06-17 09:55:56,000 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:59)] [main] - getting configuration from configuration file cls-cc.properties
+2013-06-17 09:55:56,000 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - dbClusters=metaDBCluster|0|3|192.168.11.22|1521|dbroker1|oracle.jdbc.driver.OracleDriver|ulss|ulss
+2013-06-17 09:55:56,000 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - jettyServerIP=0.0.0.0
+2013-06-17 09:55:56,000 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - jettyServerPort=7060
+2013-06-17 09:55:56,000 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:65)] [main] - initializng runtime enviroment...
+2013-06-17 09:55:56,047 [INFO] [com.mchange.v2.log.MLog.<clinit>(MLog.java:80)] [main] - MLog clients using log4j logging.
+2013-06-17 09:55:56,203 [INFO] [com.mchange.v2.c3p0.C3P0Registry.banner(C3P0Registry.java:204)] [main] - Initializing c3p0-0.9.1.2 [built 21-May-2007 15:04:56; debug? true; trace: 10]
+2013-06-17 09:55:56,234 [DEBUG] [com.mchange.v2.c3p0.management.DynamicPooledDataSourceManagerMBean.reinitialize(DynamicPooledDataSourceManagerMBean.java:236)] [main] - MBean: com.mchange.v2.c3p0:type=PooledDataSource[1hgemx08vm5k18uj6z14z|12eb9c8] registered.
+2013-06-17 09:55:56,250 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:69)] [main] - initialize runtime enviroment successfully
+2013-06-17 09:55:56,297 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:119)] [main] - intialize cls cc server successfully
+2013-06-17 09:55:56,297 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.startup(CLSCCServer.java:50)] [main] - starting cls cc server...
+2013-06-17 09:55:56,359 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.startup(CLSCCServer.java:52)] [main] - start cls cc server successfully
+2013-06-17 10:01:33,850 [DEBUG] [cn.ac.iie.cls.cc.master.CCHandler.handle(CCHandler.java:49)] [17002614@qtp-5209335-0] - /clsagent/download
+2013-06-17 10:01:33,850 [DEBUG] [cn.ac.iie.cls.cc.master.CCHandler.handle(CCHandler.java:59)] [17002614@qtp-5209335-0] - 
+2013-06-17 10:28:55,086 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:58)] [main] - initializing cls cc server...
+2013-06-17 10:28:55,096 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:59)] [main] - getting configuration from configuration file cls-cc.properties
+2013-06-17 10:28:55,198 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - dbClusters=metaDBCluster|0|3|192.168.11.22|1521|dbroker1|oracle.jdbc.driver.OracleDriver|ulss|ulss
+2013-06-17 10:28:55,199 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - jettyServerIP=0.0.0.0
+2013-06-17 10:28:55,199 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - jettyServerPort=7060
+2013-06-17 10:28:55,200 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:65)] [main] - initializng runtime enviroment...
+2013-06-17 10:28:55,815 [INFO] [com.mchange.v2.log.MLog.<clinit>(MLog.java:80)] [main] - MLog clients using log4j logging.
+2013-06-17 10:28:56,277 [INFO] [com.mchange.v2.c3p0.C3P0Registry.banner(C3P0Registry.java:204)] [main] - Initializing c3p0-0.9.1.2 [built 21-May-2007 15:04:56; debug? true; trace: 10]
+2013-06-17 10:28:56,306 [DEBUG] [com.mchange.v2.c3p0.management.DynamicPooledDataSourceManagerMBean.reinitialize(DynamicPooledDataSourceManagerMBean.java:236)] [main] - MBean: com.mchange.v2.c3p0:type=PooledDataSource[1hgemx08vm6qgxb1ml0k1l|19dd97b] registered.
+2013-06-17 10:28:56,317 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:69)] [main] - initialize runtime enviroment successfully
+2013-06-17 10:28:56,458 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:119)] [main] - intialize cls cc server successfully
+2013-06-17 10:28:56,459 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.startup(CLSCCServer.java:50)] [main] - starting cls cc server...
+2013-06-17 10:28:56,547 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.startup(CLSCCServer.java:52)] [main] - start cls cc server successfully
+2013-06-17 15:58:14,814 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:58)] [main] - initializing cls cc server...
+2013-06-17 15:58:14,824 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:59)] [main] - getting configuration from configuration file cls-cc.properties
+2013-06-17 15:58:14,853 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - dbClusters=metaDBCluster|0|3|192.168.11.22|1521|dbroker1|oracle.jdbc.driver.OracleDriver|ulss|ulss
+2013-06-17 15:58:14,854 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - jettyServerIP=0.0.0.0
+2013-06-17 15:58:14,854 [DEBUG] [cn.ac.iie.cls.cc.config.Configuration.dumpConfiguration(Configuration.java:115)] [main] - jettyServerPort=7060
+2013-06-17 15:58:14,854 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:65)] [main] - initializng runtime enviroment...
+2013-06-17 15:58:14,944 [INFO] [com.mchange.v2.log.MLog.<clinit>(MLog.java:80)] [main] - MLog clients using log4j logging.
+2013-06-17 15:58:15,592 [INFO] [com.mchange.v2.c3p0.C3P0Registry.banner(C3P0Registry.java:204)] [main] - Initializing c3p0-0.9.1.2 [built 21-May-2007 15:04:56; debug? true; trace: 10]
+2013-06-17 15:58:15,625 [DEBUG] [com.mchange.v2.c3p0.management.DynamicPooledDataSourceManagerMBean.reinitialize(DynamicPooledDataSourceManagerMBean.java:236)] [main] - MBean: com.mchange.v2.c3p0:type=PooledDataSource[1hgemx08vmihz6i7xjuwi|cec87] registered.
+2013-06-17 15:58:15,637 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:69)] [main] - initialize runtime enviroment successfully
+2013-06-17 15:58:15,686 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.init(CLSCCServer.java:119)] [main] - intialize cls cc server successfully
+2013-06-17 15:58:15,686 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.startup(CLSCCServer.java:50)] [main] - starting cls cc server...
+2013-06-17 15:58:15,769 [INFO] [cn.ac.iie.cls.cc.server.CLSCCServer.startup(CLSCCServer.java:52)] [main] - start cls cc server successfully
