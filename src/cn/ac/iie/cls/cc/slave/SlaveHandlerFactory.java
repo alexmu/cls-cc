@@ -16,8 +16,15 @@ import cn.ac.iie.cls.cc.slave.dataetl.DataETLTaskReportHandler;
 import cn.ac.iie.cls.cc.slave.dataetlcluster.DataEtlClusterStatusHandler;
 import cn.ac.iie.cls.cc.slave.linkagecmd.ConfigExecuteHandler;
 import cn.ac.iie.cls.cc.slave.linkagecmd.QueryExecuteHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterDataBaseCreateHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterDataBaseDropHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterDataBaseTableListHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterSessionHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterStatusHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableCreateHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableDropHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableInfoHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableTruncateHandler;
 import cn.ac.iie.cls.cc.slave.raccluster.RacClusterSessionHandler;
 import cn.ac.iie.cls.cc.slave.raccluster.RacClusterStatusHandler;
 import java.util.HashMap;
@@ -58,6 +65,13 @@ public class SlaveHandlerFactory {
             //datacachecluster
             put("/datacachecluster/status", DataCacheClusterStatusHandler.class);
             //nosqlcluster
+            put("/nosqlcluster/database/create", NoSqlClusterDataBaseCreateHandler.class);
+            put("/nosqlcluster/database/drop", NoSqlClusterDataBaseDropHandler.class);
+            put("/nosqlcluster/database/tablelist", NoSqlClusterDataBaseTableListHandler.class);
+            put("/nosqlcluster/table/create",NoSqlClusterTableCreateHandler.class);
+            put("/nosqlcluster/table/drop", NoSqlClusterTableDropHandler.class);
+            put("/nosqlcluster/table/truncate", NoSqlClusterTableTruncateHandler.class);
+            put("/nosqlcluster/table/info", NoSqlClusterTableInfoHandler.class);
             put("/nosqlcluster/status", NoSqlClusterStatusHandler.class);
             put("/nosqlcluster/session", NoSqlClusterSessionHandler.class);
             //raccluster

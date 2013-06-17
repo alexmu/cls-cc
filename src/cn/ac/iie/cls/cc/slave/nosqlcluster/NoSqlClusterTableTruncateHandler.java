@@ -57,13 +57,26 @@ public class NoSqlClusterTableTruncateHandler implements SlaveHandler {
             } else {
                 //connect to hive
                 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
-                conn = DriverManager.getConnection("jdbc:hive://192.168.120.46:10000/default", "", "");
+                String connectStr = "jdbc:hive://192.168.120.46:10000/" + databaseName;
+                logger.debug(connectStr);
+                conn = DriverManager.getConnection(connectStr, "", "");
                 Statement stmt = conn.createStatement();
-                //parse xml
-                //then create table
-                String tableFullName = databaseName + "." + tableName;
-                String tmpTableFullName = tableFullName + "_" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                String sql = "CREATE TABLE " + tmpTableFullName + " LIKE " + tableFullName;
+                
+                //then create table                
+                String sql = "USE " + databaseName;
+                logger.info(sql);
+                stmt.executeQuery(sql);
+                
+                String tmpTableName = tableName + "_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                sql = "CREATE TABLE " + tmpTableName + " LIKE " + tableName;
+                logger.info(sql);
+                stmt.executeQuery(sql);
+
+                sql = "DROP TABLE " + tableName;
+                logger.info(sql);
+                stmt.executeQuery(sql);
+
+                sql = "ALTER TABLE " + tmpTableName + " RENAME TO " + tableName;
                 logger.info(sql);
                 stmt.executeQuery(sql);
 
