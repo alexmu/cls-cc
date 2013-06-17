@@ -9,11 +9,12 @@ import cn.ac.iie.cls.cc.config.Configuration;
 import cn.ac.iie.cls.cc.master.CCHandler;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.*;
-import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
 
 /**
  *
