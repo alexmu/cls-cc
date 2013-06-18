@@ -4,6 +4,7 @@
  */
 package cn.ac.iie.cls.cc.slave.nosqlcluster;
 
+import cn.ac.iie.cls.cc.commons.RuntimeEnv;
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,7 +35,10 @@ public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
     }
 
     public String execute(String pRequestContent) {
-        String result = "";
+
+        if (pRequestContent == null || pRequestContent.isEmpty()) {
+            return FAIL_RESPONSE.replace("MESSAGE", "create database unsuccessfully for database creating configuration is empty");
+        }
 
         String databaseName = null;
         Connection conn = null;
@@ -48,29 +52,28 @@ public class NoSqlClusterDataBaseCreateHandler implements SlaveHandler {
 
             if (databaseName.isEmpty()) {
                 //databaseName
-                result = FAIL_RESPONSE.replace("MESSAGE", "databaseName is not defined");
+                return FAIL_RESPONSE.replace("MESSAGE", "databaseName is not defined");
             } else {
                 //connect to hive
                 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
-                conn = DriverManager.getConnection("jdbc:hive://192.168.120.46:10000/default", "", "");
+                conn = DriverManager.getConnection((String) RuntimeEnv.getParam(RuntimeEnv.HIVE_CONN_STR), "", "");
                 Statement stmt = conn.createStatement();
                 //parse xml
                 //then create table
-                String sql = "CREATE DATABASE IF NOT EXISTS " + databaseName +(comment.isEmpty() ? "" : " COMMENT '" + comment + "'");
+                String sql = "CREATE DATABASE IF NOT EXISTS " + databaseName + (comment.isEmpty() ? "" : " COMMENT '" + comment + "'");
                 logger.info(sql);
                 stmt.executeQuery(sql);
-                result = SUCCESS_RESPONSE.replace("MESSAGE", "create database " + databaseName + " successfully");
+                return SUCCESS_RESPONSE.replace("MESSAGE", "create database " + databaseName + " successfully");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            result = FAIL_RESPONSE.replace("MESSAGE", "create database " + databaseName + " unsuccessfully for " + ex.getMessage());
+            return FAIL_RESPONSE.replace("MESSAGE", "create database " + databaseName + " unsuccessfully for " + ex.getMessage());
         } finally {
             try {
                 conn.close();
             } catch (Exception ex) {
             }
         }
-        return result;
     }
 
     public static void main(String[] args) {

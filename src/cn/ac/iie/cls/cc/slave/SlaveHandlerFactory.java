@@ -27,6 +27,8 @@ import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableInfoHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableTruncateHandler;
 import cn.ac.iie.cls.cc.slave.raccluster.RacClusterSessionHandler;
 import cn.ac.iie.cls.cc.slave.raccluster.RacClusterStatusHandler;
+import cn.ac.iie.cls.cc.slave.test.DataCollectJobExecTestHandler;
+import cn.ac.iie.cls.cc.slave.welcome.WelcomeHandler;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -46,6 +48,8 @@ public class SlaveHandlerFactory {
     }
     private static Map<String, Class> slaveClassSet = new HashMap<String, Class>() {
         {
+            //dataetl
+            put("/welcome", WelcomeHandler.class);
             //dataetl
             put("/dataetl/execute", DataETLExecuteHandler.class);
             put("/dataetl/checkstatus", DataETLCheckStatusHandler.class);
@@ -68,7 +72,7 @@ public class SlaveHandlerFactory {
             put("/nosqlcluster/database/create", NoSqlClusterDataBaseCreateHandler.class);
             put("/nosqlcluster/database/drop", NoSqlClusterDataBaseDropHandler.class);
             put("/nosqlcluster/database/tablelist", NoSqlClusterDataBaseTableListHandler.class);
-            put("/nosqlcluster/table/create",NoSqlClusterTableCreateHandler.class);
+            put("/nosqlcluster/table/create", NoSqlClusterTableCreateHandler.class);
             put("/nosqlcluster/table/drop", NoSqlClusterTableDropHandler.class);
             put("/nosqlcluster/table/truncate", NoSqlClusterTableTruncateHandler.class);
             put("/nosqlcluster/table/info", NoSqlClusterTableInfoHandler.class);
@@ -77,6 +81,8 @@ public class SlaveHandlerFactory {
             //raccluster
             put("/raccluster/status", RacClusterStatusHandler.class);
             put("/raccluster/session", RacClusterSessionHandler.class);
+            //raccluster
+            put("/test/dcjetest", DataCollectJobExecTestHandler.class);
         }
     };
     private static Map<String, SlaveHandler> slaveObjectSet = new HashMap<String, SlaveHandler>();

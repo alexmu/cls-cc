@@ -41,7 +41,7 @@ public class CLSAgentReportHandler implements SlaveHandler {
                     }
 
                 }
-                //DataCollectJobTracker.appendTask(task_id, dctList);
+                DataCollectJobTracker.getDataCollectJobTracker().appendTask(task_id, dctList);
             } else if (splitXml[1].equals("one")) {//one
                 for (int i = 0; i < splitXml.length; i++) {
                     if (i > 4) {
@@ -51,7 +51,7 @@ public class CLSAgentReportHandler implements SlaveHandler {
                         System.out.println("#######one: " + dct.fileName);
                     }
                 }
-                //DataCollectJobTracker.responseTask(task_id, dctList);
+                DataCollectJobTracker.getDataCollectJobTracker().responseTask(task_id, dctList);
             } else {
                 ;
             }

@@ -4,6 +4,7 @@
  */
 package cn.ac.iie.cls.cc.slave.nosqlcluster;
 
+import cn.ac.iie.cls.cc.commons.RuntimeEnv;
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,19 +25,22 @@ import org.dom4j.Element;
  * @author wanghh19880807
  */
 //删除数据库中的表
-public class NoSqlClusterTableDropHandler implements SlaveHandler{
-   
+public class NoSqlClusterTableDropHandler implements SlaveHandler {
+
     private static final String SUCCESS_RESPONSE = "<response><message>MESSAGE<message></response>";
     private static final String FAIL_RESPONSE = "<error><message>MESSAGE<message></error>";
     static Logger logger = null;
-    
+
     static {
         PropertyConfigurator.configure("log4j.properties");
         logger = Logger.getLogger(NoSqlClusterTableDropHandler.class.getName());
     }
 
     public String execute(String pRequestContent) {
-        String result = "";//返回的结果
+
+        if (pRequestContent == null || pRequestContent.isEmpty()) {
+            return FAIL_RESPONSE.replace("MESSAGE", "drop table unsuccessfully for table droping configuration is empty");
+        }
 
         String databaseName = null;
         String tableName = null;
@@ -46,34 +50,38 @@ public class NoSqlClusterTableDropHandler implements SlaveHandler{
             Element requestParamsElt = databaseDropDoc.getRootElement();
             Element databaseNameElt = requestParamsElt.element("databaseName");
             databaseName = databaseNameElt == null ? "" : databaseNameElt.getStringValue();
-            Element tableNameElt = requestParamsElt.element("name"); 
+            Element tableNameElt = requestParamsElt.element("tableName");
             tableName = tableNameElt == null ? "" : tableNameElt.getStringValue();
-            
+
             if (databaseName.isEmpty()) {
-                result = FAIL_RESPONSE.replace("MESSAGE", databaseName +" is not defined");
-            }else if(tableName.isEmpty()){
-                result = FAIL_RESPONSE.replace("MESSAGE", tableName + " is not defined");
+                return FAIL_RESPONSE.replace("MESSAGE", "databaseName  is not defined");
+            } else if (tableName.isEmpty()) {
+                return FAIL_RESPONSE.replace("MESSAGE", "tableName is not defined");
             } else {
                 //connect to hive
                 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
-                conn = DriverManager.getConnection("jdbc:hive://192.168.120.46:10000/default", "", "");
+                conn = DriverManager.getConnection((String) RuntimeEnv.getParam(RuntimeEnv.HIVE_CONN_STR), "", "");
                 Statement stmt = conn.createStatement();
                 //parse xml
                 //then create table
-                String sql = "DROP TABLE " + databaseName+"."+ tableName ;
+                String sql = "USE " + databaseName;
                 logger.info(sql);
                 stmt.executeQuery(sql);
-     
-                result = SUCCESS_RESPONSE.replace("MESSAGE", "drop table " + databaseName +"."+ tableName + " successfully");
+
+                sql = "DROP TABLE " + tableName;
+                logger.info(sql);
+                stmt.executeQuery(sql);
+
+                return SUCCESS_RESPONSE.replace("MESSAGE", "drop table " + databaseName + "." + tableName + " successfully");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            result = FAIL_RESPONSE.replace("MESSAGE", "drop table " + databaseName +"."+  tableName + " unsuccessfully for " + ex.getMessage());
+            return FAIL_RESPONSE.replace("MESSAGE", "drop table " + databaseName + "." + tableName + " unsuccessfully for " + ex.getMessage());
         } finally {
             try {
                 conn.close();
             } catch (Exception ex) {
-                if(conn!=null){
+                if (conn != null) {
                     try {
                         conn.close();
                     } catch (SQLException ex1) {
@@ -82,12 +90,8 @@ public class NoSqlClusterTableDropHandler implements SlaveHandler{
                 }
             }
         }
-        return result;
     }
 
-    
-    
-    
     public static void main(String[] args) {
         File inputXml = new File("drop-table-specific.xml");
         try {
@@ -107,5 +111,4 @@ public class NoSqlClusterTableDropHandler implements SlaveHandler{
         }
 
     }
-    
 }

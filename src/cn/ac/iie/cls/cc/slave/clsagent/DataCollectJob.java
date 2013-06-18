@@ -49,13 +49,14 @@ public class DataCollectJob {
         for (DataCollectTask dataCollectTask : pDataCollectTaskList) {
             dataCollectTaskSet.put(dataCollectTask.fileName, dataCollectTask);
         }
+        logger.info("****dataCollectTaskSet size:"+dataCollectTaskSet.size());
         ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {
             etlJob.setTask2doNum(pDataCollectTaskList.size());
         }
     }
 
-    public void resposeTask(List<DataCollectTask> pDataCollectTaskList) {
+    public void responseTask(List<DataCollectTask> pDataCollectTaskList) {
         List<ETLTask> etlTaskList = new ArrayList<ETLTask>();
         for (DataCollectTask dataCollectTask : pDataCollectTaskList) {
             switch (dataCollectTask.taskStatus) {
@@ -72,6 +73,7 @@ public class DataCollectJob {
                     logger.warn("unknown task status " + dataCollectTask.taskStatus + " for data collect task of " + dataCollectTask.fileName);
             }
         }
+        logger.info("****dataCollectTaskSet size:"+dataCollectTaskSet.size());
         //add list
         ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {

@@ -4,6 +4,7 @@
  */
 package cn.ac.iie.cls.cc.slave.nosqlcluster;
 
+import cn.ac.iie.cls.cc.commons.RuntimeEnv;
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,7 +38,10 @@ public class NoSqlClusterTableTruncateHandler implements SlaveHandler {
     }
 
     public String execute(String pRequestContent) {
-        String result = "";//返回的结果
+
+        if (pRequestContent == null || pRequestContent.isEmpty()) {
+            return FAIL_RESPONSE.replace("MESSAGE", "truncate table unsuccessfully for table truncating configuration is empty");
+        }
 
         String databaseName = null;
         String tableName = null;
@@ -47,26 +51,24 @@ public class NoSqlClusterTableTruncateHandler implements SlaveHandler {
             Element requestParamsElt = databaseDropDoc.getRootElement();
             Element databaseNameElt = requestParamsElt.element("databaseName");
             databaseName = databaseNameElt == null ? "" : databaseNameElt.getStringValue();
-            Element tableNameElt = requestParamsElt.element("name");
+            Element tableNameElt = requestParamsElt.element("tableName");
             tableName = tableNameElt == null ? "" : tableNameElt.getStringValue();
 
             if (databaseName.isEmpty()) {
-                result = FAIL_RESPONSE.replace("MESSAGE", databaseName + " is not defined");
+                return FAIL_RESPONSE.replace("MESSAGE", "databaseName  is not defined");
             } else if (tableName.isEmpty()) {
-                result = FAIL_RESPONSE.replace("MESSAGE", tableName + " is not defined");
+                return FAIL_RESPONSE.replace("MESSAGE", "tableName is not defined");
             } else {
                 //connect to hive
-                Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
-                String connectStr = "jdbc:hive://192.168.120.46:10000/" + databaseName;
-                logger.debug(connectStr);
-                conn = DriverManager.getConnection(connectStr, "", "");
+                Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");                
+                conn = DriverManager.getConnection((String) RuntimeEnv.getParam(RuntimeEnv.HIVE_CONN_STR), "", "");
                 Statement stmt = conn.createStatement();
-                
+
                 //then create table                
                 String sql = "USE " + databaseName;
                 logger.info(sql);
                 stmt.executeQuery(sql);
-                
+
                 String tmpTableName = tableName + "_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
                 sql = "CREATE TABLE " + tmpTableName + " LIKE " + tableName;
                 logger.info(sql);
@@ -80,11 +82,11 @@ public class NoSqlClusterTableTruncateHandler implements SlaveHandler {
                 logger.info(sql);
                 stmt.executeQuery(sql);
 
-                result = SUCCESS_RESPONSE.replace("MESSAGE", "truncate table " + databaseName + "." + tableName + " successfully");
+                return SUCCESS_RESPONSE.replace("MESSAGE", "truncate table " + databaseName + "." + tableName + " successfully");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            result = FAIL_RESPONSE.replace("MESSAGE", "truncate table " + databaseName + "." + tableName + " unsuccessfully for " + ex.getMessage());
+            return FAIL_RESPONSE.replace("MESSAGE", "truncate table " + databaseName + "." + tableName + " unsuccessfully for " + ex.getMessage());
         } finally {
             try {
                 conn.close();
@@ -98,7 +100,6 @@ public class NoSqlClusterTableTruncateHandler implements SlaveHandler {
                 }
             }
         }
-        return result;
     }
 
     public static void main(String[] args) {

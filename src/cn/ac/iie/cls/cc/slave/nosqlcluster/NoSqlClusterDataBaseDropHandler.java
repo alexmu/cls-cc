@@ -4,6 +4,7 @@
  */
 package cn.ac.iie.cls.cc.slave.nosqlcluster;
 
+import cn.ac.iie.cls.cc.commons.RuntimeEnv;
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,19 +24,22 @@ import org.dom4j.Element;
  *
  * @author wanghh19880807
  */
-public class NoSqlClusterDataBaseDropHandler implements SlaveHandler{
-   
+public class NoSqlClusterDataBaseDropHandler implements SlaveHandler {
+
     private static final String SUCCESS_RESPONSE = "<response><message>MESSAGE<message></response>";
     private static final String FAIL_RESPONSE = "<error><message>MESSAGE<message></error>";
     static Logger logger = null;
-    
+
     static {
         PropertyConfigurator.configure("log4j.properties");
         logger = Logger.getLogger(NoSqlClusterDataBaseDropHandler.class.getName());
     }
 
     public String execute(String pRequestContent) {
-        String result = "";//返回的结果
+
+        if (pRequestContent == null || pRequestContent.isEmpty()) {
+            return FAIL_RESPONSE.replace("MESSAGE", "drop database unsuccessfully for database droping configuration is empty");
+        }
 
         String databaseName = null;
         Connection conn = null;
@@ -44,30 +48,30 @@ public class NoSqlClusterDataBaseDropHandler implements SlaveHandler{
             Element requestParamsElt = databaseDropDoc.getRootElement();
             Element databaseNameElt = requestParamsElt.element("databaseName");
             databaseName = databaseNameElt == null ? "" : databaseNameElt.getStringValue();
-    
+
             if (databaseName.isEmpty()) {
-                result = FAIL_RESPONSE.replace("MESSAGE", databaseName +" is not defined");
+                return FAIL_RESPONSE.replace("MESSAGE", databaseName + " is not defined");
             } else {
                 //connect to hive
                 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
-                conn = DriverManager.getConnection("jdbc:hive://192.168.120.46:10000/default", "", "");
+                conn = DriverManager.getConnection((String) RuntimeEnv.getParam(RuntimeEnv.HIVE_CONN_STR), "", "");
                 Statement stmt = conn.createStatement();
                 //parse xml
                 //then drop database
-                String sql = "DROP DATABASE " + databaseName ;
+                String sql = "DROP DATABASE " + databaseName;
                 logger.info(sql);
                 stmt.executeQuery(sql);
                 //将Message替换成为相应的信息
-                result = SUCCESS_RESPONSE.replace("MESSAGE", "drop database " + databaseName + " successfully");
+                return SUCCESS_RESPONSE.replace("MESSAGE", "drop database " + databaseName + " successfully");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            result = FAIL_RESPONSE.replace("MESSAGE", "drop database " + databaseName + " unsuccessfully for " + ex.getMessage());
+            return FAIL_RESPONSE.replace("MESSAGE", "drop database " + databaseName + " unsuccessfully for " + ex.getMessage());
         } finally {
             try {
                 conn.close();
             } catch (Exception ex) {
-                if(conn!=null){
+                if (conn != null) {
                     try {
                         conn.close();
                     } catch (SQLException ex1) {
@@ -76,7 +80,6 @@ public class NoSqlClusterDataBaseDropHandler implements SlaveHandler{
                 }
             }
         }
-        return result;
     }
 
     public static void main(String[] args) {
@@ -99,4 +102,3 @@ public class NoSqlClusterDataBaseDropHandler implements SlaveHandler{
 
     }
 }
-
