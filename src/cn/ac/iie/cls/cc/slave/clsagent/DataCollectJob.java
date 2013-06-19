@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 /**
  *
@@ -32,9 +35,29 @@ public class DataCollectJob {
         logger = Logger.getLogger(DataCollectJob.class.getName());
     }
 
-    public DataCollectJob(String pProcessJobInstanceID, String pDataProcessDescriptor) {
-        processJobInstanceID = pProcessJobInstanceID;
-        dataProcessDescriptor = pDataProcessDescriptor;
+    private DataCollectJob() {
+    }
+
+    public static DataCollectJob getDataCollectJob(String pProcessJobDescriptor) {
+        DataCollectJob dataCollectJob = new DataCollectJob();
+        try {
+            Document processJobDoc = DocumentHelper.parseText(pProcessJobDescriptor);
+            Element processJobInstanceElt = processJobDoc.getRootElement();
+
+            Element processJobInstanceIdElt = processJobInstanceElt.element("processJobInstanceId");
+            if (processJobInstanceIdElt == null) {
+                logger.error("no processJobInstanceId element found in " + pProcessJobDescriptor);
+                dataCollectJob = null;
+            } else {
+                dataCollectJob.processJobInstanceID = processJobInstanceIdElt.getStringValue();
+                dataCollectJob.dataProcessDescriptor = pProcessJobDescriptor;
+                //fixme!
+            }
+        } catch (Exception ex) {
+            logger.error("creating data collect job instance is failed for " + ex.getMessage(), ex);
+            dataCollectJob = null;
+        }
+        return dataCollectJob;
     }
 
     public String getProcessJobInstanceID() {
@@ -49,7 +72,7 @@ public class DataCollectJob {
         for (DataCollectTask dataCollectTask : pDataCollectTaskList) {
             dataCollectTaskSet.put(dataCollectTask.fileName, dataCollectTask);
         }
-        logger.info("****dataCollectTaskSet size:"+dataCollectTaskSet.size());
+        logger.info("****dataCollectTaskSet size:" + dataCollectTaskSet.size());
         ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {
             etlJob.setTask2doNum(pDataCollectTaskList.size());
@@ -73,7 +96,7 @@ public class DataCollectJob {
                     logger.warn("unknown task status " + dataCollectTask.taskStatus + " for data collect task of " + dataCollectTask.fileName);
             }
         }
-        logger.info("****dataCollectTaskSet size:"+dataCollectTaskSet.size());
+        logger.info("****dataCollectTaskSet size:" + dataCollectTaskSet.size());
         //add list
         ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {

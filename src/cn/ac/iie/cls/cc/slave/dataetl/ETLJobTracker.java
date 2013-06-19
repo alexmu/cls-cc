@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
@@ -18,6 +20,7 @@ public class ETLJobTracker implements Runnable {
 
     private static BlockingQueue<ETLJob> etlJobWaitingList = new LinkedBlockingQueue<ETLJob>();
     private static Map<String, ETLJob> etlJobSet = new HashMap<String, ETLJob>();
+    private Lock etlJobSetLock = new ReentrantLock();
     private static ETLJobTracker etlJobTracker = null;
 
     private ETLJobTracker() {
@@ -40,29 +43,32 @@ public class ETLJobTracker implements Runnable {
     }
 
     public void removeJob(ETLJob pETLJob) {
-        synchronized (etlJobSet) {
-            etlJobSet.remove(pETLJob.getProcessJobInstanceID());
-        }
+        etlJobSetLock.lock();
+        etlJobSet.remove(pETLJob.getProcessJobInstanceID());
+        etlJobSetLock.unlock();
     }
 
     public ETLJob getJob(String pProcessJobInstanceID) {
-        synchronized (etlJobSet) {
-            return etlJobSet.get(pProcessJobInstanceID);
-        }
+        etlJobSetLock.lock();
+        ETLJob etlJob = etlJobSet.get(pProcessJobInstanceID);
+        etlJobSetLock.unlock();
+        return etlJob;
     }
 
     public void appendTask(String pDataProcessInstanceId, List<ETLTask> pETLTaskList) {
-        synchronized (etlJobSet) {
-            ETLJob etlJob = etlJobSet.get(pDataProcessInstanceId);
-            etlJob.appendTask(pETLTaskList);
-        }
+        etlJobSetLock.lock();
+        ETLJob etlJob = etlJobSet.get(pDataProcessInstanceId);
+        etlJobSetLock.unlock();
+        etlJob.appendTask(pETLTaskList);
+
     }
 
     public void responseTask(String pDataProcessInstanceId, List<ETLTask> pETLTaskList) {
-        synchronized (etlJobSet) {
-            ETLJob etlJob = etlJobSet.get(pDataProcessInstanceId);
-            etlJob.responseTask(pETLTaskList);
-        }
+        etlJobSetLock.lock();
+        ETLJob etlJob = etlJobSet.get(pDataProcessInstanceId);
+        etlJobSetLock.unlock();
+        etlJob.responseTask(pETLTaskList);
+
     }
 
     @Override
@@ -71,14 +77,13 @@ public class ETLJobTracker implements Runnable {
         while (true) {
             try {
                 etlJob = etlJobWaitingList.take();
-                boolean succeeded = false;
-                //dispatch
-                if (succeeded) {
-                    etlJobSet.put(etlJob.getProcessJobInstanceID(), etlJob);
-                } else {
-                    etlJobWaitingList.put(etlJob);
-                }
+                Thread etlJobRunner = new Thread(etlJob);
+                etlJobRunner.start();
+                etlJobSetLock.lock();
+                etlJobSet.put(etlJob.getProcessJobInstanceID(), etlJob);
+                etlJobSetLock.unlock();
             } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }

@@ -14,8 +14,13 @@ public class CLSAgentDataCollectHandler implements SlaveHandler {
 
 //    private 
     public String execute(String pRequestContent) {
-        String result = null;       
-        return result;
+
+        DataCollectJob dataCollectJob = DataCollectJob.getDataCollectJob(pRequestContent);
+        if (dataCollectJob != null) {
+            DataCollectJobTracker.getDataCollectJobTracker().appendJob(dataCollectJob);
+            return "ok";
+        } else {
+            return "failed";
+        }
     }
-   
 }

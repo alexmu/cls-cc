@@ -1,39 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<operator name="read1_read2_filter1" class="Process" version="1.0" x="-1" y="-1">
-	<operator name="local_file_collect1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">
-                <parameter name="_task_id">1</parameter>
-                <parameter name="_operator_id">1</parameter>
-		<parameter name="srcpath">file:///mnt/data/</parameter>
-                <parameter name="processJobInstanceId">asdasdasdads</parameter>
-	</operator>
-	<operator name="csv_filter1" class="Process" version="1.0" x="-1" y="-1">
-		<operator name="read" class="CSVFileInput" x="10" y="10">
-			<description>描述</description>
-		</operator>
-		<operator name="filter1" class="Filter" x="10" y="10">
-			<description>描述</description>
-		</operator>
-		<outport name="outport1" alias="过程输出端口1" />
-		<connect from="read.outport1" to="filter1.inport1"/>
-		<connect from="filter1.outport1" to="parent.outport1"/>
-	</operator>
-	<operator name="filter2_filter3" class="Process" version="1.0" x="-1" y="-1">
-		<operator name="filter2" class="Filter" x="10" y="10">
-			<description>描述</description>
-		</operator>
-		<operator name="filter3" class="Filter" x="10" y="10">
-			<description>描述</description>
-		</operator>
-		<outport name="inport1" alias="过程输入端口1" />
-		<outport name="outport1" alias="过程输出端口1" />
-		<connect from="parent.inport1" to="filter2.inport1"/>
-		<connect from="filter2.outport1" to="filter3.inport1"/>
-		<connect from="filter3.outport1" to="parent.outport1"/>
-	</operator>
-	<operator name="outporter1" class="AlmightyOutput" x="10" y="10">
-			<description>描述</description>
-	</operator>
-	<connect from="local_file_collect1.outport1" to="csv_filter1.inport1"/>
-	<connect from="csv_filter1.outport1" to="filter2_filter3.inport1"/>
-	<connect from="filter2_filter3.outport1" to="outporter1.inport1"/>
-</operator>
+<requestParams>
+    <processJobInstanceId>8a8081e8288b759201288b97c73a000e</processJobInstanceId>
+    <processConfig>
+        <operator name="lfsc1_read1_filter1" class="Process" version="1.0" x="-1" y="-1">
+            <operator name="lfsc1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">
+                <parameter name="name">917mt</parameter>
+                <parameter name="srcpath">/home/iie</parameter>
+                <parameter name="hdfsPath">hdfs://192.168.111.128:9000/test/123/456</parameter>
+                <parameter name="timeout">10000000</parameter>
+                <parameterlist name="splitConfig">
+                    <parametermap name="exe" value="true"/>
+                    <parametermap name="linesplitor" value=""/>
+                    <parametermap name="num" value="1000"/>
+                </parameterlist>
+            </operator>                       
+            <operator name="csv_file_reader1" class="CSVFileInput" version="1.0" x="-1" y="-1">                
+                <parameter name="csvFile">file://./csv-sample-file.csv</parameter>                
+                <parameter name="hasHeader">true</parameter>                
+                <parameter name="trimLines">true</parameter>                
+                <parameter name="fileEncoding">UTF-8</parameter>                
+                <parameterlist name="columnSet">                    
+                    <parametermap columnindex="1" columnname="isp " columntype="String"/>                    
+                    <parametermap columnindex="2" columnname="time" columntype="Timestamp" frompattern="YY-MM-DD HH:mm:SS" topattern="YYYY-MM-DD HH:mm:SS"/>                
+                </parameterlist>                                         
+            </operator>                        
+            <operator name="outporter1" class="AlmightyOutput" x="10" y="10"></operator> 
+            <connect from="lfsc1.outport1" to="csv_file_reader1.inport1"/>                       
+            <connect from="csv_file_reader1.outport1" to="outporter1.inport1"/>        
+        </operator>
+    </processConfig>
+</requestParams>

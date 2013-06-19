@@ -12,22 +12,22 @@ import cn.ac.iie.cls.cc.slave.clsagent.DataCollectJobTracker;
  *
  * @author alexmu
  */
-public class DataETLExecuteHandler implements SlaveHandler {   
-    
+public class DataETLExecuteHandler implements SlaveHandler {
+
     @Override
     public String execute(String pRequestContent) {
         String result = null;
 
-        
+
         ETLJob etlJob = ETLJob.getETLJob(pRequestContent);
 
         if (etlJob != null) {
             String clsAgentDataCollectDescriptor = etlJob.getDataProcessDescriptor().get(ETLJob.CLS_AGENT_DATA_COLLECT_DESC);
             if (clsAgentDataCollectDescriptor != null) {
-                DataCollectJob dataCollectJob = new DataCollectJob(etlJob.getProcessJobInstanceID(), clsAgentDataCollectDescriptor);
+                DataCollectJob dataCollectJob = DataCollectJob.getDataCollectJob(clsAgentDataCollectDescriptor);
                 DataCollectJobTracker.getDataCollectJobTracker().appendJob(dataCollectJob);
             }
-           
+
             ETLJobTracker.getETLJobTracker().appendJob(etlJob);
             result = "succeeded";
         } else {
@@ -35,8 +35,5 @@ public class DataETLExecuteHandler implements SlaveHandler {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) {
     }
 }

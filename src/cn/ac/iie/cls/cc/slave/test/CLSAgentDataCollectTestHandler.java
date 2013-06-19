@@ -5,14 +5,13 @@
 package cn.ac.iie.cls.cc.slave.test;
 
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
-import cn.ac.iie.cls.cc.slave.clsagent.DataCollectJob;
-import cn.ac.iie.cls.cc.slave.clsagent.DataCollectJobTracker;
+import cn.ac.iie.cls.cc.slave.clsagent.CLSAgentDataCollectHandler;
 
 /**
  *
  * @author alexmu
  */
-public class DataCollectJobExecTestHandler implements SlaveHandler {
+public class CLSAgentDataCollectTestHandler implements SlaveHandler {
 
     @Override
     public String execute(String pRequestContent) {
@@ -33,7 +32,9 @@ public class DataCollectJobExecTestHandler implements SlaveHandler {
                 + "</operator>"
                 + "</processConfig>"
                 + "</requestParams>";
-        DataCollectJobTracker.getDataCollectJobTracker().appendJob(new DataCollectJob("8a8081e8288b759201288b97c73a000e", dataProcessDesc));
-        return "ok";
+        System.out.println(dataProcessDesc);
+        CLSAgentDataCollectHandler clsAgentDataCollectHandler = new CLSAgentDataCollectHandler();
+        return clsAgentDataCollectHandler.execute(dataProcessDesc);
     }
+    
 }
