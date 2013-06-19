@@ -15,7 +15,7 @@
                 </parameterlist>
             </operator>                       
             <operator name="csv_file_reader1" class="CSVFileInput" version="1.0" x="-1" y="-1">                
-                <parameter name="csvFile">file://./csv-sample-file.csv</parameter>                
+                <parameter name="csvFile">${FILE_PATH}</parameter>                
                 <parameter name="hasHeader">true</parameter>                
                 <parameter name="trimLines">true</parameter>                
                 <parameter name="fileEncoding">UTF-8</parameter>                

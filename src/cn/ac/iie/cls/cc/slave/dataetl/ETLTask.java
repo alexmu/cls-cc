@@ -17,7 +17,11 @@ public class ETLTask {
     int taskStatus;
 
     public ETLTask(String pFileName) {
+        this(pFileName, EXECUTING);
+    }
+
+    public ETLTask(String pFileName, int pTaskStatus) {
         filePath = pFileName;
-        taskStatus = EXECUTING;
+        taskStatus = pTaskStatus;
     }
 }
