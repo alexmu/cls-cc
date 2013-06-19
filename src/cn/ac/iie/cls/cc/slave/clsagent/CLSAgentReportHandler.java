@@ -17,15 +17,15 @@ public class CLSAgentReportHandler implements SlaveHandler {
 
     public String execute(String pRequestContent) {
         String xml = "";
-        xml =pRequestContent;
-        if(xml.equals("")){
+        xml = pRequestContent;
+        if (xml.equals("")) {
             return "CLSAgentReportHandler's pRequestContent is empty!";
         }
         System.out.println(new Date().toString() + " xml:" + xml);
 
         //file which has been upload
         if (xml.startsWith("database")) {
-            System.out.println("database: "+xml);
+            System.out.println("database: " + xml);
             String[] splitXml = xml.split("[|]");
             String task_id = "";
             task_id = splitXml[2];
@@ -55,9 +55,13 @@ public class CLSAgentReportHandler implements SlaveHandler {
             } else {
                 ;
             }
-        } else if(xml.startsWith("status")){
-            System.out.println("status log : "+(xml.split("[|]"))[1]);
+        } else if (xml.startsWith("status")) {
+            if (xml.contains("heartbeat")) {
+                System.out.println("heartbeat log : " + (xml.split("[|]"))[1]);
+            } else {
+                System.out.println("status log : " + (xml.split("[|]"))[1]);
+            }
         }
-        return "success!"+xml;
+        return "success!" + xml;
     }
 }
