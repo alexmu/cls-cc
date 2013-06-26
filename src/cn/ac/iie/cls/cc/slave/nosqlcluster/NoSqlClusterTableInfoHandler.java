@@ -72,7 +72,7 @@ public class NoSqlClusterTableInfoHandler implements SlaveHandler {
                 sql = "Describe " + tableName;
                 logger.info(sql);
                 rs = stmt.executeQuery(sql);
-                String message = "<databaseName>" + databaseName + "</databaseName>" + "<name>" + tableName + "</name>" + "	<tableType></tableType>" + "<columns>";
+                String message = "<databaseName>" + databaseName + "</databaseName>" + "<tableName>" + tableName + "</tableName>" + "	<tableType></tableType>" + "<columns>";
                 //拼接结果
                 while (rs.next()) {
                     //获取列名称

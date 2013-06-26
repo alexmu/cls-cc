@@ -21,6 +21,7 @@ import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterDataBaseDropHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterDataBaseTableListHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterSessionHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterStatusHandler;
+import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableColumnAlterHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableCreateHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableDropHandler;
 import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableInfoHandler;
@@ -77,6 +78,7 @@ public class SlaveHandlerFactory {
             put("/nosqlcluster/table/drop", NoSqlClusterTableDropHandler.class);
             put("/nosqlcluster/table/truncate", NoSqlClusterTableTruncateHandler.class);
             put("/nosqlcluster/table/info", NoSqlClusterTableInfoHandler.class);
+            put("/nosqlcluster/table/column/alter", NoSqlClusterTableColumnAlterHandler.class);
             put("/nosqlcluster/status", NoSqlClusterStatusHandler.class);
             put("/nosqlcluster/session", NoSqlClusterSessionHandler.class);
             //raccluster

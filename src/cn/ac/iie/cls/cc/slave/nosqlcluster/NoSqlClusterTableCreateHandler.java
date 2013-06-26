@@ -147,7 +147,6 @@ public class NoSqlClusterTableCreateHandler implements SlaveHandler {
         } else {
             return oldType;
         }
-
     }
 
     public static void main(String[] args) {

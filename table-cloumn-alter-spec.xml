@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<requestParams>
+    <databaseName>gjzxdb</databaseName>
+    <tableName>917mt</tableName>
+    <columnAlter>
+        <add>
+            <columns>
+                <column>
+                    <name>SOURCE_TYPE</name>
+                    <type>VARCHAR2(20)</type>
+                    <default />
+                    <comment />
+                    <null>1</null>
+                    <pk>0</pk>
+                    <index>0</index>
+                    <unique>0</unique>
+                </column>
+                <column>
+                    <name>SOURCE</name>
+                    <type>VARCHAR2(20)</type>
+                    <default />
+                    <comment />
+                    <null>1</null>
+                    <pk>0</pk>
+                    <index>0</index>
+                    <unique>0</unique>
+                </column>
+            </columns>
+        </add>
+        <rename>
+            <columns>
+                <column>
+                    <oldName>SOURCE_TYPE</oldName>
+                    <newName>NEW_NAME1</newName>
+                </column>
+                <column>
+                    <oldName>SOURCE</oldName>
+                    <newName>NEW_NAME2</newName>
+                </column>
+            </columns>
+        </rename>
+        <alterType>
+            <columns>
+                <column>
+                    <name>SOURCE</name>
+                    <oldType>int</oldType>
+                    <newType>string</newType>
+                </column>
+            </columns>
+        </alterType>
+        <drop>
+            <columns>
+                <column>
+                    <name>SOURCE</name>
+                </column>
+            </columns>
+        </drop>
+    </columnAlter>
+</requestParams>
+
