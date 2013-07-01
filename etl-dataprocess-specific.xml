@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requestParams>
+    <processJobInstanceId>8a8081e8288b759201288b97c73a000e</processJobInstanceId>
+    <processConfig>
+        <operator name="read1_to1" class="Process" version="1.0" x="-1" y="-1">
+            <operator name="csv_file_reader1" class="CSVFileInput" version="1.0" x="-1" y="-1">                
+                <parameter name="csvFile">${FILE_PATH}</parameter>                
+                <parameter name="hasHeader">true</parameter>                
+                <parameter name="trimLines">true</parameter>                
+                <parameter name="fileEncoding">UTF-8</parameter>                
+                <parameterlist name="columnSet">                    
+                    <parametermap columnindex="1" columnname="isp" columntype="String"/>                    
+                    <parametermap columnindex="2" columnname="time" columntype="Timestamp" frompattern="YY-MM-DD HH:mm:SS" topattern="YYYY-MM-DD HH:mm:SS"/>                
+                </parameterlist>                                         
+            </operator>                        
+            <operator name="to1" alias="to" class="TableOutport">
+                <parameter name="datasource">huizong</parameter>
+                <parameter name="tableName">f_917mt_etl_test</parameter>
+                <parameter name="isClean">false</parameter>
+                <parameter name="rowlimit">300</parameter>
+                <parameterlist name="fields">
+                    <parametermap tablefield="SOURCE_TYPE" streamfield="isp" />
+                    <parametermap tablefield="SOURCE" streamfield="time" />
+                </parameterlist>
+            </operator>                                   
+            <connect from="csv_file_reader1.outport1" to="to1.inport1"/>        
+        </operator>
+    </processConfig>
+</requestParams>

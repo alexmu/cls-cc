@@ -31,27 +31,57 @@ public class CLSAgentReportHandler implements SlaveHandler {
             task_id = splitXml[2];
             List<DataCollectTask> dctList = new ArrayList<DataCollectTask>();
 
+
             if (splitXml[1].equals("all")) {//all
                 for (int i = 0; i < splitXml.length; i++) {
-                    if (i > 4) {
-                        DataCollectTask dct = new DataCollectTask(splitXml[i]);
-                        dct.taskStatus = 0;
-                        dctList.add(dct);
-                        System.out.println("#######total: " + dct.fileName);
+                    if (i > 5) {
+                        String type = splitXml[2];
+                        if (type.equals("GetherDataFromThrid")) {
+                            System.out.println("#######total: " + splitXml[i]);
+                        } else {
+                            DataCollectTask dct = new DataCollectTask(splitXml[i]);
+                            dct.taskStatus = DataCollectTask.EXECUTING;
+                            dctList.add(dct);
+                            System.out.println("#######total: " + dct.fileName);
+                            DataCollectJobTracker.getDataCollectJobTracker().appendTask(task_id, dctList);
+                        }
+
                     }
 
                 }
-                DataCollectJobTracker.getDataCollectJobTracker().appendTask(task_id, dctList);
+                
             } else if (splitXml[1].equals("one")) {//one
                 for (int i = 0; i < splitXml.length; i++) {
-                    if (i > 4) {
-                        DataCollectTask dct = new DataCollectTask(splitXml[i]);
-                        dct.taskStatus = 1;
-                        dctList.add(dct);
-                        System.out.println("#######one: " + dct.fileName);
+                    if (i > 5) {
+                        String type = splitXml[2];
+                        if (type.equals("GetherDataFromThrid")) {
+                            System.out.println("#######one: " + splitXml[i]);
+                        } else {
+                            DataCollectTask dct = new DataCollectTask(splitXml[i]);
+                            dct.taskStatus = DataCollectTask.SUCCEEDED;
+                            dctList.add(dct);
+                            System.out.println("#######one: " + dct.fileName);
+                            DataCollectJobTracker.getDataCollectJobTracker().responseTask(task_id, dctList);
+                        }
                     }
                 }
-                DataCollectJobTracker.getDataCollectJobTracker().responseTask(task_id, dctList);
+                
+            } else if (splitXml[1].equals("err")) {//one
+                for (int i = 0; i < splitXml.length; i++) {
+                    if (i > 5) {
+                        String type = splitXml[2];
+                        if (type.equals("GetherDataFromThrid")) {
+                            System.out.println("#######err: " + splitXml[i]);
+                        } else {
+                            DataCollectTask dct = new DataCollectTask(splitXml[i]);
+                            dct.taskStatus = DataCollectTask.FAILED;
+                            dctList.add(dct);
+                            System.out.println("#######err: " + dct.fileName);
+                            DataCollectJobTracker.getDataCollectJobTracker().responseTask(task_id, dctList);
+                        }
+                    }
+                }
+                
             } else {
                 ;
             }

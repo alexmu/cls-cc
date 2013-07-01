@@ -111,22 +111,25 @@ public class ETLJob implements Runnable {
             }
         }
 
-        if (clsAgentETLOperatorDescCnt != 1) {
-            throw new Exception("the descriptor'number of etlor  of cls agent in data process descriptor:" + operatorNodeXmlStr + " is " + clsAgentETLOperatorDescCnt + ",which is not correct");
-        }
+//        if (clsAgentETLOperatorDescCnt > 1) {
+//            throw new Exception("the descriptor'number of etlor  of cls agent in data process descriptor:" + operatorNodeXmlStr + " is " + clsAgentETLOperatorDescCnt + ",which is not correct");
+//        }
 
-        elements = operatorNode.elements("connect");
-        int clsAgentETLConnectCnt = 0;
-        for (Element element : elements) {
-            if (element.attributeValue("from").startsWith(clsAgentETLOperatorName)) {
-                operatorNode.remove(element);
-                clsAgentETLConnectCnt++;
+        if (clsAgentETLOperatorDescCnt > 0) {
+            elements = operatorNode.elements("connect");
+            int clsAgentETLConnectCnt = 0;
+            for (Element element : elements) {
+                if (element.attributeValue("from").startsWith(clsAgentETLOperatorName)) {
+                    operatorNode.remove(element);
+                    clsAgentETLConnectCnt++;
+                }
             }
+//        if (clsAgentETLConnectCnt < 1) {
+//            throw new Exception("the connector'number of etlor of cls agent in data process descriptor:" + operatorNodeXmlStr + " is less than 1");
+//        }
         }
 
-        if (clsAgentETLConnectCnt < 1) {
-            throw new Exception("the connector'number of etlor of cls agent in data process descriptor:" + operatorNodeXmlStr + " is less than 1");
-        }
+
         dataProcessDescriptor.put(DATA_ETL_DESC, PROCESS_JOB_DESC.replace("PROCESS_JOB_ID", processJobInstanceID).replace("PROCESS_CONFIG", getXmlString(operatorNode)));
     }
 
@@ -136,6 +139,33 @@ public class ETLJob implements Runnable {
 
     public Map<String, String> getDataProcessDescriptor() {
         return dataProcessDescriptor;
+    }
+
+    public String getInputFilePathStr() {
+        String filePath = "";
+        try {
+            Document dataProcessDocument = DocumentHelper.parseText(dataProcessDescriptor.get(DATA_ETL_DESC));
+            Element operatorNode = dataProcessDocument.getRootElement();
+
+            String operatorNodeXmlStr = getXmlString(operatorNode);
+            logger.debug("data process descriptor:" + operatorNodeXmlStr);
+
+            List<Element> elements = operatorNode.element("processConfig").element("operator").elements("operator");
+
+            for (Element element : elements) {
+                if (element.attributeValue("class").startsWith("TXTFileInput") || element.attributeValue("class").startsWith("CSVFileInput") || element.attributeValue("class").startsWith("XMLFileInput")) {
+                    List<Element> paramElts = element.elements("parameter");
+                    for (Element paramElt : paramElts) {
+                        if (paramElt.attributeValue("name").endsWith("File")) {
+                            filePath = paramElt.getTextTrim();
+                        }
+                    }
+                }
+            }
+            return filePath;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public void appendTask(List<ETLTask> pETLTaskList) {
@@ -181,7 +211,7 @@ public class ETLJob implements Runnable {
 
                     boolean succeeded = false;
                     //dispatch
-                    String host = "http://192.168.111.129";
+                    String host = "http://10.128.125.73";
                     int port = 7070;
                     String content = dataProcessDescriptor.get(DATA_ETL_DESC).replace("${FILE_PATH}", etlTask.filePath);
                     try {
@@ -211,15 +241,19 @@ public class ETLJob implements Runnable {
 
                 synchronized (this) {
                     logger.info("td:" + task2doNum + ",tt:" + etlTaskSet.size() + ",st:" + succeededETLTaskSet.size() + ",ft:" + failedETLTaskSet.size());
-                    if (task2doNum > 0) {
+                    if (task2doNum == 0) {
+                        logger.info("etl job for data process job " + processJobInstanceID + " is finished with no task to do");
+                        break;
+                    } else if (task2doNum > 0) {
                         int taskDoneNum = succeededETLTaskSet.size() + failedETLTaskSet.size();
+
                         if (taskDoneNum == task2doNum) {
-                            if (succeededETLTaskSet.size() < 1) {
+                            if (succeededETLTaskSet.size() == 0) {
                                 logger.error("etl job for data process job " + processJobInstanceID + " is finished unsuccessfully");
-                            } else if (failedETLTaskSet.size() > 0) {
-                                logger.warn("etl job for data process job " + processJobInstanceID + " is finished partially successfully");
+                            } else if (failedETLTaskSet.size() == 0) {
+                                logger.warn("etl job for data process job " + processJobInstanceID + " is finished successfully");
                             } else {
-                                logger.info("etl job for data process job " + processJobInstanceID + " is finished successfully");
+                                logger.error("etl job for data process job " + processJobInstanceID + " is finished partially successfully");
                             }
                             ETLJobTracker.getETLJobTracker().removeJob(this);
                             break;

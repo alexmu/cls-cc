@@ -29,7 +29,9 @@ import cn.ac.iie.cls.cc.slave.nosqlcluster.NoSqlClusterTableTruncateHandler;
 import cn.ac.iie.cls.cc.slave.raccluster.RacClusterSessionHandler;
 import cn.ac.iie.cls.cc.slave.raccluster.RacClusterStatusHandler;
 import cn.ac.iie.cls.cc.slave.test.CLSAgentDataCollectTestHandler;
+import cn.ac.iie.cls.cc.slave.test.ConfigExecuteTestHandler;
 import cn.ac.iie.cls.cc.slave.test.DataETLExecuteTestHandler;
+import cn.ac.iie.cls.cc.slave.test.QueryExecuteTestHandler;
 import cn.ac.iie.cls.cc.slave.welcome.WelcomeHandler;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +89,8 @@ public class SlaveHandlerFactory {
             //raccluster
             put("/test/dcjetest", CLSAgentDataCollectTestHandler.class);
             put("/test/etljetest", DataETLExecuteTestHandler.class);
+            put("/test/configjetest", ConfigExecuteTestHandler.class);
+            put("/test/queryjetest", QueryExecuteTestHandler.class);
         }
     };
     private static Map<String, SlaveHandler> slaveObjectSet = new HashMap<String, SlaveHandler>();

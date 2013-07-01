@@ -79,12 +79,12 @@ public class DataCollectJobTracker implements Runnable {
                 boolean succeeded = false;
                 //dispatch
                 //add by zy
-                String host = "http://192.168.111.128";
+                String host = "http://10.128.125.74";
                 int port = 7080;
                 String content = dataCollectJob.getDataProcessDescriptor();
                 try {
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpPost httppost = new HttpPost(host + ":" + port + "/resources/clsagent/datacollect");
+                    HttpPost httppost = new HttpPost(host + ":" + port + "/resources/clsagent/execmd");
 
                     InputStreamEntity reqEntity = new InputStreamEntity(new ByteArrayInputStream(content.getBytes()), -1);
                     reqEntity.setContentType("binary/octet-stream");

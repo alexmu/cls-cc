@@ -77,20 +77,25 @@ public class DataCollectJob {
         if (etlJob != null) {
             etlJob.setTask2doNum(pDataCollectTaskList.size());
         }
+        if(pDataCollectTaskList.size()==0){
+            logger.info("data collect job for data process job " + processJobInstanceID + " is finished with no task to do");
+        }
     }
 
     public void responseTask(List<DataCollectTask> pDataCollectTaskList) {
-        List<ETLTask> etlTaskList = new ArrayList<ETLTask>();
+        List<ETLTask> etlTask2DoList = new ArrayList<ETLTask>();
+        List<ETLTask> etlTaskFailedList = new ArrayList<ETLTask>();
         for (DataCollectTask dataCollectTask : pDataCollectTaskList) {
             switch (dataCollectTask.taskStatus) {
                 case DataCollectTask.SUCCEEDED:
                     succeededDataCollectTaskSet.put(dataCollectTask.fileName, dataCollectTask);
-                    etlTaskList.add(new ETLTask(dataCollectTask.fileName));
+                    etlTask2DoList.add(new ETLTask(dataCollectTask.fileName,ETLTask.EXECUTING));
                     dataCollectTaskSet.remove(dataCollectTask.fileName);
                     break;
                 case DataCollectTask.FAILED:
                     failedDataCollectTaskSet.put(dataCollectTask.fileName, dataCollectTask);
-                    dataCollectTaskSet.remove(dataCollectTask.fileName);
+                    etlTaskFailedList.add(new ETLTask(dataCollectTask.fileName,ETLTask.FAILED));
+                    dataCollectTaskSet.remove(dataCollectTask.fileName);                    
                     break;
                 default:
                     logger.warn("unknown task status " + dataCollectTask.taskStatus + " for data collect task of " + dataCollectTask.fileName);
@@ -100,7 +105,8 @@ public class DataCollectJob {
         //add list
         ETLJob etlJob = ETLJobTracker.getETLJobTracker().getJob(processJobInstanceID);
         if (etlJob != null) {
-            ETLJobTracker.getETLJobTracker().appendTask(processJobInstanceID, etlTaskList);
+            ETLJobTracker.getETLJobTracker().appendTask(processJobInstanceID, etlTask2DoList);
+            ETLJobTracker.getETLJobTracker().responseTask(processJobInstanceID, etlTaskFailedList);
         }
 
         if (dataCollectTaskSet.size() < 1) {

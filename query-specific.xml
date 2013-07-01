@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requestParams>
+    <processJobInstanceId>8a8081e8288b759201288b97c73a000e</processJobInstanceId>
+    <processConfig>
+        <operator name="operator_id_123" class="GetherDataFromThrid" version="1.0" x="-1" y="-1">
+            <parameter name="name">newflow</parameter>
+            <parameter name="cmd">/tmp/xtld/command/start.sh 1 2</parameter>
+            <parameter name="resultFilePath">/tmp/xtld/data-cache</parameter>
+            <parameter name="hdfsPath">hdfs://10.128.125.73:9000/xtld/data-cache</parameter>
+            <parameter name="timeout">10000000</parameter>
+            <parameterlist name="splitConfig">
+                <parametermap name="exe" value="true"/>
+                <parametermap name="linesplitor" value="\n"/>
+                <parametermap name="num" value="1000"/>
+            </parameterlist>
+        </operator>
+    </processConfig>
+</requestParams>
+

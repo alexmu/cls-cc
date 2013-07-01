@@ -7,6 +7,8 @@ package cn.ac.iie.cls.cc.slave.dataetl;
 import cn.ac.iie.cls.cc.slave.SlaveHandler;
 import cn.ac.iie.cls.cc.slave.clsagent.DataCollectJob;
 import cn.ac.iie.cls.cc.slave.clsagent.DataCollectJobTracker;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,6 +31,15 @@ public class DataETLExecuteHandler implements SlaveHandler {
             }
 
             ETLJobTracker.getETLJobTracker().appendJob(etlJob);
+            if (clsAgentDataCollectDescriptor == null) {
+                String inputFilePath = etlJob.getInputFilePathStr();
+                System.out.println("#####inputFilePath:" + inputFilePath);
+                List<ETLTask> etlTaskList = new ArrayList<ETLTask>();
+                etlTaskList.add(new ETLTask(inputFilePath, ETLTask.EXECUTING));
+                etlJob.setTask2doNum(1);
+                etlJob.appendTask(etlTaskList);
+                
+            }
             result = "succeeded";
         } else {
             result = "failed";
