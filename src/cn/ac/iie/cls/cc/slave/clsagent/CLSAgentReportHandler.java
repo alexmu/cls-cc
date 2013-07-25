@@ -28,7 +28,7 @@ public class CLSAgentReportHandler implements SlaveHandler {
             System.out.println("database: " + xml);
             String[] splitXml = xml.split("[|]");
             String task_id = "";
-            task_id = splitXml[2];
+            task_id = splitXml[3];
             List<DataCollectTask> dctList = new ArrayList<DataCollectTask>();
 
 

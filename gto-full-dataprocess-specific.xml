@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requestParams>
+    <processJobInstanceId>8a8081e8288b759201288b97c73a000e</processJobInstanceId>
+    <processConfig>
+        <operator name="lfsc1_read1_to1" class="Process" version="1.0" x="-1" y="-1">
+            <operator name="lfsc1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">
+                <parameter name="name">917mt</parameter>
+                <parameter name="srcpath">/venus/Export/huizong/iie/917mt</parameter>
+                <parameter name="hdfsPath">hdfs://10.128.125.73:9000/xtld/data-cache</parameter>
+                <parameter name="timeout">10000000</parameter>
+                <parameterlist name="splitConfig">
+                    <parametermap name="exe" value="true"/>
+                    <parametermap name="linesplitor" value=""/>
+                    <parametermap name="num" value="1000"/>
+                </parameterlist>
+            </operator>                       
+            <operator name="csv_file_reader1" class="TXTFileInput" version="1.0" x="-1" y="-1">                
+                <parameter name="txtFile">${FILE_PATH}</parameter>                
+                <parameter name="hasHeader">true</parameter>
+                <parameter name="fieldDelimiter">\t</parameter>
+                <parameter name="recordDelimiter">\n</parameter>                
+                <parameter name="trimLines">true</parameter>                
+                <parameter name="fileEncoding">UTF-8</parameter>                
+                <parameterlist name="columnSet">                    
+                    <parametermap columnindex="1" columnname="SOURCE" columntype="STRING"/>                    
+                    <parametermap columnindex="2" columnname="SOURCE_TYPE" columntype="STRING"/>
+                    <parametermap columnindex="3" columnname="DETAIL_TYPE_ID" columntype="STRING"/>
+                    <parametermap columnindex="4" columnname="BASEL_TYPE" columntype="STRING"/>
+                    <parametermap columnindex="5" columnname="SUB_TYPE" columntype="STRING"/>
+                    <parametermap columnindex="6" columnname="DETAIL_TYPE" columntype="STRING"/>
+                    <parametermap columnindex="7" columnname="EXT_TYPE" columntype="STRING"/> 
+                    <parametermap columnindex="8" columnname="TIME" columntype="STRING"/>
+                    <parametermap columnindex="9" columnname="DD" columntype="STRING"/>
+                    <parametermap columnindex="10" columnname="TT" columntype="STRING"/>
+                    <parametermap columnindex="11" columnname="S_IP_T" columntype="STRING"/>
+                    <parametermap columnindex="12" columnname="S_IP_N" columntype="STRING"/>
+                    <parametermap columnindex="13" columnname="D_IP_T" columntype="STRING"/>
+                    <parametermap columnindex="14" columnname="D_IP_N" columntype="STRING"/>
+                    <parametermap columnindex="15" columnname="S_PORT" columntype="STRING"/>
+                    <parametermap columnindex="16" columnname="D_PORT" columntype="STRING"/>
+                    <parametermap columnindex="17" columnname="C_FLAG" columntype="STRING"/>
+                    <parametermap columnindex="18" columnname="MON_POINT_LOCATION_TYPE" columntype="STRING"/>
+                    <parametermap columnindex="19" columnname="MON_POINT_LOCATION_REGION" columntype="STRING"/>
+                    <parametermap columnindex="20" columnname="MON_POINT_LOCATION_ISP" columntype="STRING"/>
+                    <parametermap columnindex="21" columnname="MON_POINT_LOCATION_PLACE" columntype="STRING"/>
+                    <parametermap columnindex="22" columnname="MON_POINT_LOCATION_NET" columntype="STRING"/>
+                    <parametermap columnindex="23" columnname="MON_POINT_LOCATION_GATE" columntype="STRING"/>
+                    <parametermap columnindex="24" columnname="RETURN_VALUE" columntype="STRING"/>                
+                </parameterlist>                                         
+            </operator>                        
+            <operator name="to1" alias="to" class="GlobalTableOutput">
+                <parameter name="datasourceList">cncert,beijing,anhui</parameter>
+                <parameter name="tableName">f_917mt_etl_test4</parameter>
+                <parameter name="syncOutput">false</parameter>
+                <parameter name="compareFieldLogicExp">MON_POINT_LOCATION_ISP</parameter>
+                <parameterlist name="mapRules">
+                    <parametermap mapKey=".*" datasource="cncert" />
+                    <parametermap mapKey="LT" datasource="beijing" />
+                    <parametermap mapKey="YD" datasource="anhui" />
+                </parameterlist>
+                <parameterlist name="fields">
+                    <parametermap tablefield="SOURCE" streamfield="SOURCE_TYPE" />
+                    <parametermap tablefield="SOURCE_TYPE" streamfield="SOURCE" />
+                    <parametermap tablefield="DETAIL_TYPE_ID" streamfield="DETAIL_TYPE_ID" />
+                    <parametermap tablefield="BASEL_TYPE" streamfield="BASEL_TYPE" />
+                    <parametermap tablefield="SUB_TYPE" streamfield="SUB_TYPE" />
+                    <parametermap tablefield="DETAIL_TYPE" streamfield="DETAIL_TYPE" />
+                    <parametermap tablefield="EXT_TYPE" streamfield="EXT_TYPE" />
+                    <parametermap tablefield="TIME" streamfield="TIME" />
+                    <parametermap tablefield="DD" streamfield="DD" />
+                    <parametermap tablefield="TT" streamfield="TT" />
+                    <parametermap tablefield="S_IP_T" streamfield="S_IP_T" />
+                    <parametermap tablefield="S_IP_N" streamfield="S_IP_N" />
+                    <parametermap tablefield="D_IP_T" streamfield="D_IP_T" />
+                    <parametermap tablefield="D_IP_N" streamfield="D_IP_N" />
+                    <parametermap tablefield="S_PORT" streamfield="S_PORT" />
+                    <parametermap tablefield="D_PORT" streamfield="D_PORT" />
+                    <parametermap tablefield="C_FLAG" streamfield="C_FLAG" />
+                    <parametermap tablefield="MON_POINT_LOCATION_TYPE" streamfield="MON_POINT_LOCATION_TYPE" />
+                    <parametermap tablefield="MON_POINT_LOCATION_REGION" streamfield="MON_POINT_LOCATION_REGION" />
+                    <parametermap tablefield="MON_POINT_LOCATION_ISP" streamfield="MON_POINT_LOCATION_ISP" />
+                    <parametermap tablefield="MON_POINT_LOCATION_PLACE" streamfield="MON_POINT_LOCATION_PLACE" />
+                    <parametermap tablefield="MON_POINT_LOCATION_NET" streamfield="MON_POINT_LOCATION_NET" />
+                    <parametermap tablefield="MON_POINT_LOCATION_GATE" streamfield="MON_POINT_LOCATION_GATE" />
+                    <parametermap tablefield="RETURN_VALUE" streamfield="RETURN_VALUE" />
+                </parameterlist>
+            </operator> 
+            <connect from="lfsc1.outport1" to="csv_file_reader1.inport1"/>                       
+            <connect from="csv_file_reader1.outport1" to="to1.inport1"/>        
+        </operator>
+    </processConfig>
+</requestParams>

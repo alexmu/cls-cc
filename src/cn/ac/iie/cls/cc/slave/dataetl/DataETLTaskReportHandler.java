@@ -21,7 +21,7 @@ public class DataETLTaskReportHandler implements SlaveHandler {
         String[] reportItems = pRequestContent.split("[|]");
         String processJobInstanceId = reportItems[2];
         String filePath = reportItems[3];
-        ETLTask etlTask = new ETLTask(filePath, ETLTask.SUCCEEDED);
+        ETLTask etlTask = new ETLTask(filePath, ETLTask.SUCCEEDED,reportItems[4]);
         List etlTaskList = new ArrayList<ETLTask>();
         etlTaskList.add(etlTask);
         ETLJobTracker.getETLJobTracker().responseTask(processJobInstanceId, etlTaskList);

@@ -16,7 +16,7 @@ public class DataETLExecuteTestHandler implements SlaveHandler {
 
     @Override
     public String execute(String pRequestContent) {
-        String dataProcessDesc = XMLReader.getXMLContent("simple-dataprocess-specific.xml");
+        String dataProcessDesc = XMLReader.getXMLContent("917mt-etl-dataprocess-specific.xml");
         DataETLExecuteHandler dataETLExecuteHandler = new DataETLExecuteHandler();
         return dataETLExecuteHandler.execute(dataProcessDesc);
     }

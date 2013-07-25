@@ -20,7 +20,6 @@ public class DataETLExecuteHandler implements SlaveHandler {
     public String execute(String pRequestContent) {
         String result = null;
 
-
         ETLJob etlJob = ETLJob.getETLJob(pRequestContent);
 
         if (etlJob != null) {

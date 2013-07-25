@@ -85,25 +85,6 @@ public class CLSCCServer {
 
         server = new Server();
         
-        //add by zy
-//        int port=8082;
-//        Server server = new Server(port);
-//        
-//        ResourceHandler resource_handler=new ResourceHandler();
-//        resource_handler.setDirectoriesListed(true);
-//       // resource_handler.setWelcomeFiles(new String[]{"index.html"});
-//        resource_handler.setResourceBase("D:/123");
-//        //resource_handler.setResourceBase(args.length==2?args[1]:".");
-//        resource_handler.setStylesheet("");
-//      
-//        HandlerList handlers = new HandlerList();
-//        handlers.setHandlers(new Handler[]{resource_handler,new DefaultHandler()});
-//        
-//        server.setHandler(handlers);
-//        
-//        server.start();
-//        server.join();
-        
         server.setConnectors(new Connector[]{connector});
 
         ContextHandler ccContext = new ContextHandler("/resources");

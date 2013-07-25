@@ -4,6 +4,9 @@
  */
 package cn.ac.iie.cls.cc.slave.clsagent;
 
+import cn.ac.iie.cls.cc.commons.RuntimeEnv;
+import cn.ac.iie.cls.cc.util.XMLReader;
+import cn.ac.iie.cls.cc.util.ZooKeeperOperator;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -72,16 +75,42 @@ public class DataCollectJobTracker implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("dasasdasdasdasdasdasdasdasdasdasdasdasdasdasd");
         DataCollectJob dataCollectJob = null;
         while (true) {
             try {
+                System.out.println("dasasdasdasdasdasdasdasdasdasdasdasdasdasdasd");
                 dataCollectJob = dataCollectJobWaitingList.take();
                 boolean succeeded = false;
                 //dispatch
                 //add by zy
-                String host = "http://10.128.125.74";
+                String host = "";
                 int port = 7080;
                 String content = dataCollectJob.getDataProcessDescriptor();
+                //begin:20130717
+                String agentIP = XMLReader.getValueFromStrDGText(content, "agentIP");
+                if (agentIP == null || agentIP.equals("")) {
+                    System.out.println("agentIP is empty!");
+                    return;
+                } else {
+                    host = "http://" + agentIP;
+                }
+
+                ZooKeeperOperator zkoperator = new ZooKeeperOperator();
+                try {
+                    zkoperator.connect((String)RuntimeEnv.getParam(RuntimeEnv.ZK_CLUSTER));
+                    if (zkoperator.exists("/agent/" + agentIP).equals("true")) {
+                        ;
+                    } else {
+                        System.out.println("/agent/" + agentIP + " don't exist!");
+                        return;
+                    }
+                } catch (Exception ex) {
+                    System.out.println("zookeeper err!");
+                    return;
+                }
+                //end:2030717
+
                 try {
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpPost httppost = new HttpPost(host + ":" + port + "/resources/clsagent/execmd");

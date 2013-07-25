@@ -31,7 +31,7 @@ import org.dom4j.io.XMLWriter;
  * @author alexmu
  */
 public class ETLJob implements Runnable {
-
+    
     private String processJobInstanceID = "";
     private Map<String, String> dataProcessDescriptor = new HashMap<String, String>();
     public static final String CLS_AGENT_DATA_COLLECT_DESC = "clsAgentETLDesc";
@@ -44,21 +44,22 @@ public class ETLJob implements Runnable {
     private Map<String, ETLTask> succeededETLTaskSet = new HashMap<String, ETLTask>();
     private Map<String, ETLTask> failedETLTaskSet = new HashMap<String, ETLTask>();
     static Logger logger = null;
-
+    
     static {
         PropertyConfigurator.configure("log4j.properties");
         logger = Logger.getLogger(ETLJob.class.getName());
     }
-
+    
     private ETLJob() {
     }
-
+    
     public static ETLJob getETLJob(String pProcessJobDescriptor) {
+        logger.info(pProcessJobDescriptor);
         ETLJob dataProcessJob = new ETLJob();
         try {
             Document processJobDoc = DocumentHelper.parseText(pProcessJobDescriptor);
             Element processJobInstanceElt = processJobDoc.getRootElement();
-
+            
             Element processJobInstanceIdElt = processJobInstanceElt.element("processJobInstanceId");
             if (processJobInstanceIdElt == null) {
                 logger.error("no processJobInstanceId element found in " + pProcessJobDescriptor);
@@ -80,7 +81,7 @@ public class ETLJob implements Runnable {
         }
         return dataProcessJob;
     }
-
+    
     private String getXmlString(Element pOperatorNode) throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         XMLWriter xw = new XMLWriter(bos);
@@ -89,17 +90,17 @@ public class ETLJob implements Runnable {
         xw = null;
         return new String(bos.toByteArray(), "UTF-8");
     }
-
+    
     private void parse(String pDataProcessDescriptor) throws Exception {
         System.out.println(pDataProcessDescriptor);
         Document dataProcessDocument = DocumentHelper.parseText(pDataProcessDescriptor);
         Element operatorNode = dataProcessDocument.getRootElement();
-
+        
         String operatorNodeXmlStr = getXmlString(operatorNode);
         logger.debug("data process descriptor:" + operatorNodeXmlStr);
-
+        
         List<Element> elements = operatorNode.elements("operator");
-
+        
         int clsAgentETLOperatorDescCnt = 0;
         String clsAgentETLOperatorName = "";
         for (Element element : elements) {
@@ -128,30 +129,37 @@ public class ETLJob implements Runnable {
 //            throw new Exception("the connector'number of etlor of cls agent in data process descriptor:" + operatorNodeXmlStr + " is less than 1");
 //        }
         }
-
-
+        
+        elements = operatorNode.elements("connect");
+        for (Element element : elements) {
+            if (element.attributeValue("to").startsWith("parent.out")) {
+                operatorNode.remove(element);
+            }
+        }
+        
+        
         dataProcessDescriptor.put(DATA_ETL_DESC, PROCESS_JOB_DESC.replace("PROCESS_JOB_ID", processJobInstanceID).replace("PROCESS_CONFIG", getXmlString(operatorNode)));
     }
-
+    
     public String getProcessJobInstanceID() {
         return processJobInstanceID;
     }
-
+    
     public Map<String, String> getDataProcessDescriptor() {
         return dataProcessDescriptor;
     }
-
+    
     public String getInputFilePathStr() {
         String filePath = "";
         try {
             Document dataProcessDocument = DocumentHelper.parseText(dataProcessDescriptor.get(DATA_ETL_DESC));
             Element operatorNode = dataProcessDocument.getRootElement();
-
+            
             String operatorNodeXmlStr = getXmlString(operatorNode);
             logger.debug("data process descriptor:" + operatorNodeXmlStr);
-
+            
             List<Element> elements = operatorNode.element("processConfig").element("operator").elements("operator");
-
+            
             for (Element element : elements) {
                 if (element.attributeValue("class").startsWith("TXTFileInput") || element.attributeValue("class").startsWith("CSVFileInput") || element.attributeValue("class").startsWith("XMLFileInput")) {
                     List<Element> paramElts = element.elements("parameter");
@@ -167,7 +175,7 @@ public class ETLJob implements Runnable {
             return null;
         }
     }
-
+    
     public void appendTask(List<ETLTask> pETLTaskList) {
         for (ETLTask etlTask : pETLTaskList) {
             try {
@@ -176,7 +184,7 @@ public class ETLJob implements Runnable {
             }
         }
     }
-
+    
     public void responseTask(List<ETLTask> pETLTaskList) {
         synchronized (this) {
             for (ETLTask etlTask : pETLTaskList) {
@@ -197,18 +205,18 @@ public class ETLJob implements Runnable {
             }
         }
     }
-
+    
     public void setTask2doNum(int task2doNum) {
         this.task2doNum = task2doNum;
     }
-
+    
     @Override
     public void run() {
         while (true) {
             try {
                 ETLTask etlTask = etlTaskWaitingList.peek();
                 if (etlTask != null) {
-
+                    
                     boolean succeeded = false;
                     //dispatch
                     String host = "http://10.128.125.73";
@@ -217,7 +225,7 @@ public class ETLJob implements Runnable {
                     try {
                         HttpClient httpClient = new DefaultHttpClient();
                         HttpPost httppost = new HttpPost(host + ":" + port + "/resources/etltask/execute");
-
+                        
                         InputStreamEntity reqEntity = new InputStreamEntity(new ByteArrayInputStream(content.getBytes()), -1);
                         reqEntity.setContentType("binary/octet-stream");
                         reqEntity.setChunked(true);
@@ -225,6 +233,7 @@ public class ETLJob implements Runnable {
                         etlTaskSetLock.lock();
                         HttpResponse response = httpClient.execute(httppost);
                         System.out.println(response.getStatusLine());
+                        //fixme:dispose task dispatch error                        
                         httppost.releaseConnection();
                         succeeded = true;
                     } catch (Exception ex) {
@@ -238,7 +247,7 @@ public class ETLJob implements Runnable {
                         }
                     }
                 }
-
+                
                 synchronized (this) {
                     logger.info("td:" + task2doNum + ",tt:" + etlTaskSet.size() + ",st:" + succeededETLTaskSet.size() + ",ft:" + failedETLTaskSet.size());
                     if (task2doNum == 0) {
@@ -246,7 +255,7 @@ public class ETLJob implements Runnable {
                         break;
                     } else if (task2doNum > 0) {
                         int taskDoneNum = succeededETLTaskSet.size() + failedETLTaskSet.size();
-
+                        
                         if (taskDoneNum == task2doNum) {
                             if (succeededETLTaskSet.size() == 0) {
                                 logger.error("etl job for data process job " + processJobInstanceID + " is finished unsuccessfully");
@@ -260,14 +269,14 @@ public class ETLJob implements Runnable {
                         }
                     }
                 }
-
+                
                 Thread.sleep(10000);
             } catch (Exception ex) {
                 logger.warn("some error happened when doing etl task tracking" + ex.getMessage(), ex);
             }
         }
     }
-
+    
     public static void main(String[] args) {
         String dataProcessDescriptor = XMLReader.getXMLContent("simple-dataprocess-specific.xml");
         System.out.println(dataProcessDescriptor);

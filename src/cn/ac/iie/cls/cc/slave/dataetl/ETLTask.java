@@ -15,13 +15,19 @@ public class ETLTask {
     public static final int FAILED = 2;
     String filePath;
     int taskStatus;
+    String taskStat;
 
     private ETLTask(String pFileName) {
         this(pFileName, EXECUTING);
     }
 
     public ETLTask(String pFileName, int pTaskStatus) {
+        this(pFileName, pTaskStatus, "");
+    }
+
+    public ETLTask(String pFileName, int pTaskStatus, String taskStat) {
         filePath = pFileName;
         taskStatus = pTaskStatus;
+        taskStat = taskStat;
     }
 }

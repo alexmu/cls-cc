@@ -23,6 +23,7 @@ public class RuntimeEnv {
     public static final String METADB_CLUSTER = "metaDBCluster";
     public static final String HDFS_CONN_STR = "hdfsConnStr";
     public static final String HIVE_CONN_STR = "hiveConnStr";
+    public static final String ZK_CLUSTER = "zkCluster";
     private static Map<String, Object> dynamicParams = new HashMap<String, Object>();
     //logger
     static Logger logger = null;
@@ -70,6 +71,14 @@ public class RuntimeEnv {
         }
 
         addParam(HIVE_CONN_STR, hiveConnStr);
+        
+        String zkCluster = conf.getString(ZK_CLUSTER, "");
+        if (zkCluster.isEmpty()) {
+            logger.error("parameter zkCluster does not exist or is not defined");
+            return false;
+        }
+
+        addParam(ZK_CLUSTER, zkCluster);
         return true;
     }
 

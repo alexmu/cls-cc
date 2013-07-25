@@ -5,8 +5,8 @@
         <operator name="lfsc1_read1_filter1" class="Process" version="1.0" x="-1" y="-1">
             <operator name="lfsc1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">
                 <parameter name="name">917mt</parameter>
-                <parameter name="srcpath">/home/iie</parameter>
-                <parameter name="hdfsPath">hdfs://192.168.111.128:9000/test/123/456</parameter>
+                <parameter name="srcpath">/venus/Export/huizong/iie/917mt</parameter>
+                <parameter name="hdfsPath">hdfs://10.128.125.73:9000/tmp/data-cache</parameter>
                 <parameter name="timeout">10000000</parameter>
                 <parameterlist name="splitConfig">
                     <parametermap name="exe" value="true"/>
@@ -20,8 +20,8 @@
                 <parameter name="trimLines">true</parameter>                
                 <parameter name="fileEncoding">UTF-8</parameter>                
                 <parameterlist name="columnSet">                    
-                    <parametermap columnindex="1" columnname="isp " columntype="String"/>                    
-                    <parametermap columnindex="2" columnname="time" columntype="Timestamp" frompattern="YY-MM-DD HH:mm:SS" topattern="YYYY-MM-DD HH:mm:SS"/>                
+                    <parametermap columnindex="1" columnname="SOURCE" columntype="String"/>                    
+                    <parametermap columnindex="2" columnname="SOURCE_TYPE" columntype="String"/>                
                 </parameterlist>                                         
             </operator>                        
             <operator name="outporter1" class="AlmightyOutput" x="10" y="10"></operator> 

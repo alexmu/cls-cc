@@ -22,15 +22,15 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
  * @author mwm
  */
 public class CCHandler extends AbstractHandler {
-
+    
     private static CCHandler ccHandler = null;
     static Logger logger = null;
-
+    
     static {
         PropertyConfigurator.configure("log4j.properties");
         logger = Logger.getLogger(CCHandler.class.getName());
     }
-
+    
     public static CCHandler getCCHandler() {
         if (ccHandler != null) {
             return ccHandler;
@@ -38,14 +38,14 @@ public class CCHandler extends AbstractHandler {
         ccHandler = new CCHandler();
         return ccHandler;
     }
-
-     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         
         baseRequest.setHandled(true);
-
+        
         String requestPath = baseRequest.getPathInfo().toLowerCase();
         logger.debug(requestPath);
-
+        
         ServletInputStream servletInputStream = baseRequest.getInputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] b = new byte[4096];
@@ -55,15 +55,16 @@ public class CCHandler extends AbstractHandler {
         }
         String requestContent = new String(out.toByteArray(), "UTF-8");
         logger.debug(requestContent);
-
+        
         try {
             SlaveHandler slaveHandler = SlaveHandlerFactory.getSlaveHandler(requestPath);
             
             response.setStatus(HttpServletResponse.SC_OK);
+            logger.info(requestContent);
             response.getWriter().println(slaveHandler.execute(requestContent));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
-
+        
     }
 }
