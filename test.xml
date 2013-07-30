@@ -1,41 +1,58 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<requestParams>    
-    <processJobInstanceID>8a8081e8288b759201288b97c73a000e</processJobInstanceID>    
-    <processConfig>        
-        <operator name="read1_read2_filter1" class="Process" version="1.0" x="-1" y="-1">            
-            <operator name="local_file_collect1" class="GetherDataFromLocalFS" version="1.0" x="-1" y="-1">                
-                <parameter name="srcpath">file:///mnt/data/</parameter>            
-            </operator>            
-            <operator name="csv_filter1" class="Process" version="1.0" x="-1" y="-1">                
-                <operator name="read" class="CSVFileInput" x="10" y="10">                    
-                    <description>描述</description>                
-                </operator>                
-                <operator name="filter1" class="Filter" x="10" y="10">                    
-                    <description>描述</description>                
-                </operator>                
-                <outport name="outport1" alias="过程输出端口1" />                
-                <connect from="read.outport1" to="filter1.inport1"/>                
-                <connect from="filter1.outport1" to="parent.outport1"/>            
-            </operator>            
-            <operator name="filter2_filter3" class="Process" version="1.0" x="-1" y="-1">                
-                <operator name="filter2" class="Filter" x="10" y="10">                    
-                    <description>描述</description>                
-                </operator>                
-                <operator name="filter3" class="Filter" x="10" y="10">                    
-                    <description>描述</description>                
-                </operator>                
-                <outport name="inport1" alias="过程输入端口1" />                
-                <outport name="outport1" alias="过程输出端口1" />                
-                <connect from="parent.inport1" to="filter2.inport1"/>                
-                <connect from="filter2.outport1" to="filter3.inport1"/>                
-                <connect from="filter3.outport1" to="parent.outport1"/>            
-            </operator>            
-            <operator name="outporter1" class="AlmightyOutput" x="10" y="10">                
-                <description>描述</description>            
-            </operator>            
-            <connect from="local_file_collect1.outport1" to="csv_filter1.inport1"/>            
-            <connect from="csv_filter1.outport1" to="filter2_filter3.inport1"/>            
-            <connect from="filter2_filter3.outport1" to="outporter1.inport1"/>        
-        </operator>    
-    </processConfig>
-</requestParams>
+<tracker>
+    <trackerId>917mt_etl_process</trackerId>
+    <jobInstanceId>8a8081e8288b759201288b97c73a000e</jobInstanceId>
+    <operatorUri>/917mt_etl_process</operatorUri>
+    <duration></duration>
+    <runningState>SUCCEEDED</runningState>
+    <errorMessage></errorMessage>
+    <portCounters></portCounters>
+    <children>
+        <tracker>
+            <trackerId>917mt_file_reader1</trackerId>
+            <jobInstanceId>8a8081e8288b759201288b97c73a000e</jobInstanceId>
+            <operatorUri>/917mt_etl_process/917mt_file_reader1</operatorUri>
+            <duration></duration>
+            <runningState>SUCCEEDED</runningState>
+            <errorMessage></errorMessage>
+            <portCounters>
+                <portCounter>
+                    <portName>error1</portName>
+                    <rowsetCount></rowsetCount>
+                    <rowCount>0</rowCount>
+                </portCounter>
+                <portCounter>
+                    <portName>outport1</portName>
+                    <rowsetCount></rowsetCount>
+                    <rowCount>2479</rowCount>
+                </portCounter>
+            </portCounters>
+            <children></children>
+        </tracker>
+        <tracker>
+            <trackerId>ip_mapor1</trackerId>
+            <jobInstanceId>8a8081e8288b759201288b97c73a000e</jobInstanceId>
+            <operatorUri>/917mt_etl_process/ip_mapor1</operatorUri>
+            <duration></duration>
+            <runningState>SUCCEEDED</runningState>
+            <errorMessage></errorMessage>
+            <portCounters>
+                <portCounter>
+                    <portName>error1</portName>
+                    <rowsetCount></rowsetCount>
+                    <rowCount>0</rowCount>
+                </portCounter>
+                <portCounter>
+                    <portName>outport1</portName>
+                    <rowsetCount></rowsetCount>
+                    <rowCount>2479</rowCount>
+                </portCounter>
+                <portCounter>
+                    <portName>inport1</portName>
+                    <rowsetCount></rowsetCount>
+                    <rowCount>2479</rowCount>
+                </portCounter>
+            </portCounters>
+            <children></children>
+        </tracker>
+    </children>
+</tracker>
