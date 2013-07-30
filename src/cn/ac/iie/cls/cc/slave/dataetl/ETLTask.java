@@ -25,9 +25,9 @@ public class ETLTask {
         this(pFileName, pTaskStatus, "");
     }
 
-    public ETLTask(String pFileName, int pTaskStatus, String taskStat) {
+    public ETLTask(String pFileName, int pTaskStatus, String pTaskStat) {
         filePath = pFileName;
         taskStatus = pTaskStatus;
-        taskStat = taskStat;
+        taskStat = pTaskStat;
     }
 }
